@@ -34,14 +34,13 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { ref,reactive } from 'vue'
 import { useRouter } from 'vue-router'
-
-
+import { useUserStore } from '@/store/user'
 
 // 路由：用于快速跳转
 const router = useRouter()
-
+// 表单数据
 const form = reactive({
   name: '',
   phone: '',
@@ -49,11 +48,12 @@ const form = reactive({
   role: '',
 })
 
+// 跳转到注册页面
 const goToRegister = () => {
-  // 跳转到注册页面
   router.push('/register')
 }
 
+// 重置表单
 const reset = () => {
   form.name = ''
   form.phone = ''
@@ -61,19 +61,16 @@ const reset = () => {
   form.role = ''
 }
 
-//-----------------------
-import { ref } from 'vue'
-import { useUserStore } from '@/store/user'
-
-const jwt = ref('')
+// 用户仓库
 const userStore = useUserStore()
 
-// const doLogin = async () => {
-//   if (!jwt.value.trim()) return
-//   await userStore.login(jwt.value.trim())
-// }
-const doLogin = () => {
-  userStore.login()
+// 登录
+const doLogin = async () => {
+  //------------调用后端获得jwt
+  const jwt="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoicm9vdCIsImlkIjoxLCJleHAiOjE3NTk5MTA1Mzl9.Dyv7cYA6JpL52WnJNRM8jXGLgwGj0AryzV0GzpSkAtI"
+  localStorage.setItem('jwt', jwt)        // 先存储jwt
+  await userStore.login(jwt)              // 再装路由
+  router.replace('/home')
 }
 </script>
 

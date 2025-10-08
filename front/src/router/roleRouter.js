@@ -1,5 +1,6 @@
 // src/router/roleRoutes.js
 // 元素结构完全同官方要求，component 用懒加载
+//维护3种角色的路由
 export const adminRoutes = [
   {
     path: '/',

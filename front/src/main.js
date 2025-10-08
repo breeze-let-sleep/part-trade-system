@@ -9,6 +9,8 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import router from './router/index.js'
 //引入pinia
 import { createPinia } from 'pinia'
+//引入守卫
+import '@/router/guard.js'
 
 const app=createApp(App)
 //2、全局使用element-plus
