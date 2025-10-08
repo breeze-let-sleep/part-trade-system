@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  个人信息
+  交易成功/失败的消息列表
 </template>
 
 <style scoped>

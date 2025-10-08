@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  个人信息
+  查看和发布求购信息
 </template>
 
 <style scoped>

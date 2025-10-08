@@ -1,16 +1,7 @@
 <script setup>
-// import SideMenu from './SideMenu.vue'
-// import { useUserStore } from '@/store/user'
-// const userStore = useUserStore()
-
 import { computed } from 'vue'
 import { useUserStore } from '@/store/user.js'
 import SideMenu from './sideMenu.vue'
-
-// const userStore= {role:1, username:'admin'}
-//数字 → 中文 展示用
-// const roleLabel = { 0: '管理员', 1: '商家', 2: '顾客' }
-
 
 const userStore = useUserStore()
 const roleTag = computed(() => {
@@ -34,11 +25,9 @@ const roleTag = computed(() => {
         </div>
         <!-- 位于header的最右侧 -->
         <div style="flex: 1; text-align: right;"> 
-          <!-- 距离右边按钮2px，文字颜色为#0077ed -->
-          <!-- <span style="margin-right: 5px; color: #0077ed;">当前角色：{{ roleLabel[userStore.role] }}</span> -->
-          <span style="margin-right: 5px; color: #0077ed;">当前角色：{{ roleTag }}</span>
+          <span style="margin-right: 5px; color: #ffffff;">当前角色：{{ roleTag }}</span>
           <el-button link @click="userStore.logout(); $router.push('/login')">
-            <el-icon><Remove /></el-icon>退出
+            <el-icon color="#ffffff"><Remove /></el-icon><span style="color: #ffffff">退出</span>
           </el-button>
         </div>
       </el-header>
@@ -64,22 +53,20 @@ const roleTag = computed(() => {
   justify-content: center;
   height: 80px;
   right: 20px;
-  background-color: #a57eff;
+  /* background-color: #a57eff; */
+  /* 设置紫色渐变色背景 */
+  background: linear-gradient(135deg, #510ff7 0%, #673ab7 100%);  
 }
 .logo {
   margin-right: 8px;
   margin-top: 1px; 
-  color: #0077ed
+  color: #ffffff
 }
 .title {
   font-size: 28px; 
   font-weight: bold; 
   /* 设置渐变色字体 */
-  color: #303133;
-  background: linear-gradient(to right, #ed8200, #a5ff7e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
 }
 .flex-row {
   display: flex;

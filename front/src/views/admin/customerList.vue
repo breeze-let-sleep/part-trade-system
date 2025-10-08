@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  个人信息
+  顾客列表
 </template>
 
 <style scoped>

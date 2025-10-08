@@ -1,4 +1,5 @@
 <!-- src/layout/SideMenu.vue -->
+<!--递归菜单组件-->
 <template>
   <el-menu
     :default-active="$route.path"

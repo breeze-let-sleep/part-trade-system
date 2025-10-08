@@ -67,9 +67,12 @@ const userStore = useUserStore()
 // 登录
 const doLogin = async () => {
   //------------调用后端获得jwt
-  const jwt="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoicm9vdCIsImlkIjoxLCJleHAiOjE3NTk5MTA1Mzl9.Dyv7cYA6JpL52WnJNRM8jXGLgwGj0AryzV0GzpSkAtI"
-  localStorage.setItem('jwt', jwt)        // 先存储jwt
-  await userStore.login(jwt)              // 再装路由
+  //jwt1:admin;jwt2:merchant;jwt3:customer
+  const jwt1="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoicm9vdCIsImlkIjoxLCJleHAiOjE3NTk5MTA1Mzl9.Dyv7cYA6JpL52WnJNRM8jXGLgwGj0AryzV0GzpSkAtI"
+  const jwt2="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoxLCJuYW1lIjoi5ZOH5ZOI5ZOIIiwiaWQiOjEsImV4cCI6MTc1OTkyNjY4NX0.EW-gkWrqtl4LclYZugy_QkfhQlgKO4Y5oHDKZLxm-2c"
+  const jwt3="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoyLCJuYW1lIjoi5bCP5piOIiwiaWQiOjEsImV4cCI6MTc1OTkyNjc5NH0.kG4lGKEigaKkBmlNWYp0WRBTkvXh4By7fP8o3YIbTyM"
+  localStorage.setItem('jwt', jwt2)        // 先存储jwt
+  await userStore.login(jwt2)              // 再装路由
   router.replace('/home')
 }
 </script>
@@ -80,7 +83,7 @@ const doLogin = async () => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, rgba(106, 17, 203, 0.7) 0%, rgba(37, 117, 252, 0.7) 100%);
+  background: linear-gradient(135deg, rgba(105, 3, 214, 0.7) 20%, rgba(5, 89, 235, 0.7) 100%);
   position: relative;
 }
 

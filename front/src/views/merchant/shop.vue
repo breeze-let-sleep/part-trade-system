@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  个人信息
+  顾客发出的求购信息
 </template>
 
 <style scoped>

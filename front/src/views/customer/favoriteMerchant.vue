@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  个人信息
+  收藏商家列表
 </template>
 
 <style scoped>

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  个人信息
+  交易日志列表
 </template>
 
 <style scoped>

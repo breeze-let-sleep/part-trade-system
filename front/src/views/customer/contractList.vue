@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  个人信息
+  交易协议列表
 </template>
 
 <style scoped>

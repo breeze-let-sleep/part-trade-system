@@ -1,9 +1,12 @@
 <script setup>
-
+  const url = '/start.png'
 </script>
 
 <template>
-  首页
+  <el-image
+    :src=url
+    :fit="cover"
+   />
 </template>
 
 <style scoped>

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  个人信息
+  智能客服
 </template>
 
 <style scoped>
