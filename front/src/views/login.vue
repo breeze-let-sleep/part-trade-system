@@ -38,6 +38,8 @@ import { ref,reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user'
 
+// 当前用户信息
+const userStore = useUserStore()
 // 路由：用于快速跳转
 const router = useRouter()
 // 表单数据
@@ -61,18 +63,20 @@ const reset = () => {
   form.role = ''
 }
 
-// 用户仓库
-const userStore = useUserStore()
+
 
 // 登录
 const doLogin = async () => {
-  //------------调用后端获得jwt
-  //jwt1:admin;jwt2:merchant;jwt3:customer
-  const jwt1="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoicm9vdCIsImlkIjoxLCJleHAiOjE3NTk5MTA1Mzl9.Dyv7cYA6JpL52WnJNRM8jXGLgwGj0AryzV0GzpSkAtI"
+  //todo: 进行登录操作，成功则下发jwt令牌
+  //jwt1:admin;jwt2:merchant;jwt3:customer;jwt4:root
+  const jwt1="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoi5bCP5piOIiwiaWQiOjEsImV4cCI6MTc2MDc3NDM2MH0.ctDQg9Inl0wtToWGG2LH_TDhPQPfUGDIEHfFxPrchgs"
   const jwt2="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoxLCJuYW1lIjoi5ZOH5ZOI5ZOIIiwiaWQiOjEsImV4cCI6MTc1OTkyNjY4NX0.EW-gkWrqtl4LclYZugy_QkfhQlgKO4Y5oHDKZLxm-2c"
   const jwt3="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoyLCJuYW1lIjoi5bCP5piOIiwiaWQiOjEsImV4cCI6MTc1OTkyNjc5NH0.kG4lGKEigaKkBmlNWYp0WRBTkvXh4By7fP8o3YIbTyM"
-  localStorage.setItem('jwt', jwt2)        // 先存储jwt
-  await userStore.login(jwt2)              // 再装路由
+  const jwt4="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoicm9vdCIsImlkIjoxLCJleHAiOjE3NjA3NzQ1MzJ9.JzwHtRciNwQpbcvIdvBRCCbqp6tIEzA8wR82ncq0L_o"
+  // 先存储jwt
+  localStorage.setItem('jwt', jwt3)    
+  // 安装对应角色路由，设置登录的用户的基本信息
+  await userStore.setUserInfo(jwt3)              
   router.replace('/home')
 }
 </script>
@@ -99,7 +103,7 @@ const doLogin = async () => {
 }
 
 .login-form {
-  border: 2px solid #409eff;
+  border: 2px solid rgb(147, 71, 255);
   border-radius: 12px;
   padding: 30px;
   background-color: rgba(255, 255, 255, 0.9);
@@ -114,7 +118,7 @@ const doLogin = async () => {
 }
 
 .form-header h2 {
-  color: #409eff;
+  color: rgb(147, 71, 255);
   margin: 0;
   font-size: 28px;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
@@ -146,10 +150,10 @@ const doLogin = async () => {
 }
 
 :deep(.el-radio__inner) {
-  border-color: #409eff;
+  border-color: rgb(147, 71, 255);
 }
 
 :deep(.el-radio__inner::after) {
-  background-color: #409eff;
+  background-color: rgb(147, 71, 255);
 }
 </style>

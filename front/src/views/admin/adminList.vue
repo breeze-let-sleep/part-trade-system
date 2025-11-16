@@ -20,8 +20,7 @@ const handleCurrentChange = (val) => {
 
 //-----------------搜索框相关-------------------
 //输入框数据
-const likeName = ref('')
-const likeAddress = ref('')
+const input = ref('')
 // 时间选择器数据
 const overTime = ref('')
 //格式化时间数据
@@ -47,8 +46,7 @@ const search = () => {
 //重置搜索框
 const resetSearch = () => { 
   console.log(overTime.value)
-  likeName.value = ''
-  likeAddress.value = ''
+  input.value = ''
   overTime.value = ''
 }
 
@@ -61,7 +59,6 @@ const tableData = [
     id: '001',
     name: 'Tom',
     phone: '12312312321',
-    address: 'California',
     avatar:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
     createTime: '2025-10-10 09:00:00',
     updateTime: '2025-10-10 09:00:00',
@@ -77,8 +74,6 @@ const editRow=(index) => {
   dialogData.name = tableData[index].name
   dialogData.phone = tableData[index].phone
   dialogData.password = tableData[index].password
-  dialogData.address = tableData[index].address
-  dialogData.avatar = tableData[index].avatar
   dialogVisible.value = true
 }
 
@@ -128,7 +123,6 @@ const dialogData = reactive({
   name: '',
   phone: '',
   password: '',
-  address: '',
   avatar: '',
 })
 
@@ -210,45 +204,33 @@ onMounted(() => {
       <!-- 头部：搜索相关组件 -->
       <el-header class="header">
         <el-row>
-          <el-col :span="24"><span class="page-title">顾客列表</span></el-col>
+          <el-col :span="24"><span class="page-title">管理员列表</span></el-col>
         </el-row>
-        <el-row :gutter="10" justify="center">
-          <el-col :span="21">
+        <el-row :gutter="10">
+          <el-col :span="24">
             <div class="search-container">
-              <label class="search-label">姓名：</label>
+              <label class="search-label">搜索：</label>
               <el-input
-                v-model="likeName"
+                v-model="input"
                 style="width: 50px;"
-                placeholder="输入姓名进行模糊查找"
+                placeholder="输入姓名进行查找"
                 :prefix-icon="Search"
                 class="search-input"
               />
-              <label class="search-label">地址：</label>
-              <el-input
-                v-model="likeAddress"
-                style="width: 50px;"
-                placeholder="输入地址进行模糊查找"
-                :prefix-icon="Search"
-                class="search-input"
+              <label class="search-label">创建时间范围：</label>
+              <el-date-picker
+                v-model="overTime"
+                style="width: 200px;"
+                type="datetimerange"
+                start-placeholder="起始时间"
+                end-placeholder="结束时间"
+                format="YYYY-MM-DD HH:mm:ss"
+                date-format="YYYY/MM/DD ddd"
+                time-format="A hh:mm:ss"
               />
-            </div>
-          </el-col>
-        </el-row>
-        <el-row gutter="10" justify="center">
-          <el-col :span="21">
-            <label class="search-label">创建时间：</label>
-                <el-date-picker
-                  v-model="overTime"
-                  style="width: 600px;"
-                  type="datetimerange"
-                  start-placeholder="起始时间"
-                  end-placeholder="结束时间"
-                  format="YYYY-MM-DD HH:mm:ss"
-                  date-format="YYYY/MM/DD ddd"
-                  time-format="A hh:mm:ss"
-                />
-                <el-button class="search-button" type="primary" plain @click="search">搜索</el-button>
+              <el-button class="search-button" type="primary" plain @click="search">搜索</el-button>
               <el-button class="search-button" type="info" plain @click="resetSearch">重置</el-button>
+            </div>
           </el-col>
         </el-row>
         <el-row>
@@ -272,7 +254,6 @@ onMounted(() => {
           <el-table-column prop="id" label="ID" width="120" align="center"/>
           <el-table-column prop="name" label="姓名" width="120" align="center"/>
           <el-table-column prop="phone" label="电话" width="150" align="center"/>
-          <el-table-column prop="address" label="地址" width="150" align="center"/>
           <el-table-column prop="createTime" label="创建时间" width="180" align="center"/>
           <el-table-column prop="updateTime" label="修改时间" width="180" align="center"/>
           <el-table-column fixed="right" label="操作" min-width="200" align="center">
@@ -364,10 +345,6 @@ onMounted(() => {
       <el-form-item label="密码" prop="password">
         <el-input v-model="dialogData.password" />
       </el-form-item>
-      <!-- 地址 -->
-      <el-form-item label="地址" prop="address">
-        <el-input v-model="dialogData.address" />
-      </el-form-item>
     </el-form>
     <!-- 表单按钮 -->
     <template #footer>
@@ -396,13 +373,12 @@ onMounted(() => {
 .header {
   flex: 0 0 auto;
   padding: 10px 0;
-  height: 30vh;
+  height: 20vh;
 }
 
 .main-content {
   flex: 1;
   padding: 10px;
-  margin-top: 10px;
 }
 
 /* 搜索栏 */
@@ -426,9 +402,6 @@ onMounted(() => {
   margin-left: 10px;
 }
 
-.el-col{
-  margin-bottom: 10px;
-}
 /* 表格 */
 .table {
   width: 100%;

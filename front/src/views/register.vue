@@ -37,14 +37,10 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-
-
+import { reactive } from 'vue'
 
 // 路由：用于快速跳转
 const router = useRouter()
-
-
-import { reactive } from 'vue'
 
 const form = reactive({
   name: '',
@@ -97,7 +93,7 @@ const reset = () => {
 
 .login-form {
   margin-top: 40px;
-  border: 2px solid #409eff;
+  border: 2px solid rgb(147, 71, 255);
   border-radius: 12px;
   padding: 30px;
   background-color: rgba(255, 255, 255, 0.9);
@@ -112,7 +108,7 @@ const reset = () => {
 }
 
 .form-header h2 {
-  color: #409eff;
+  color: rgb(147, 71, 255);
   margin: 0;
   font-size: 28px;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
@@ -144,10 +140,10 @@ const reset = () => {
 }
 
 :deep(.el-radio__inner) {
-  border-color: #409eff;
+  border-color: rgb(147, 71, 255);
 }
 
 :deep(.el-radio__inner::after) {
-  background-color: #409eff;
+  background-color: rgb(147, 71, 255);
 }
 </style>

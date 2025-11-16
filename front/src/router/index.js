@@ -7,6 +7,11 @@ export const constantRoutes = [
     name: 'Login',
     component: () => import('@/views/login.vue')
   },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('@/views/register.vue')
+  },
   // 404 一定要最后动态加
   { path: '/:pathMatch(.*)*', name: '404', component: () => import('@/views/404.vue') }
 ]

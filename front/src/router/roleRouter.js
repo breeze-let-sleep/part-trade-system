@@ -22,8 +22,14 @@ export const adminRoutes = [
       {
         path: 'customerList',
         name: 'CustomerList',
-        meta: { title: '顾客列表', icon: 'GoodsFilled' },
+        meta: { title: '顾客列表', icon: 'PhoneFilled' },
         component: () => import('@/views/admin/customerList.vue')
+      },
+      {
+        path: 'adminList',
+        name: 'AdminList',
+        meta: { title: '管理员列表', icon: 'Avatar' },
+        component: () => import('@/views/admin/adminList.vue')
       },
       {
         path: 'merchantList',
@@ -32,16 +38,16 @@ export const adminRoutes = [
         component: () => import('@/views/admin/merchantList.vue')
       },
       {
-        path: 'contractList',
-        name: 'ContractList',
-        meta: { title: '合同列表', icon: 'List' },
-        component: () => import('@/views/admin/contractList.vue')
+        path: 'orderList',
+        name: 'OrdertList',
+        meta: { title: '订单列表', icon: 'List' },
+        component: () => import('@/views/admin/orderList.vue')
       },
       {
-        path: 'tradeLog',
-        name: 'TradeLog',
-        meta: { title: '交易日志表', icon: 'InfoFilled' },
-        component: () => import('@/views/admin/tradeLog.vue')
+        path: 'operateLog',
+        name: 'OperateLog',
+        meta: { title: '操作日志表', icon: 'WarningFilled' },
+        component: () => import('@/views/admin/operateLog.vue')
       },
       {
         path: 'report',
@@ -74,38 +80,20 @@ export const merchantRoutes = [
       {
         path: 'productList',
         name: 'ProductList',
-        meta: { title: '产品列表', icon: 'Menu' },
+        meta: { title: '零件管理', icon: 'Menu' },
         component: () => import('@/views/merchant/productList.vue')
-      },
-      {
-        path: 'shop',
-        name: 'Shop',
-        meta: { title: '顾客求购列表', icon: 'Shop' },
-        component: () => import('@/views/merchant/shop.vue')
-      },
-      {
-        path: 'message',
-        name: 'Message',
-        meta: { title: '消息列表', icon: 'BellFilled' },
-        component: () => import('@/views/merchant/message.vue')
       },
       {
         path: 'contractList',
         name: 'ContractList',
-        meta: { title: '合同列表', icon: 'List' },
+        meta: { title: '订单合同', icon: 'List' },
         component: () => import('@/views/merchant/contractList.vue')
       },
       {
-        path: 'tradeLog',
-        name: 'TradeLog',
-        meta: { title: '交易日志', icon: 'InfoFilled' },
-        component: () => import('@/views/merchant/tradeLog.vue')
-      },
-      {
-        path: 'robot',
-        name: 'Robot',
-        meta: { title: '智能客服', icon: 'HelpFilled' },
-        component: () => import('@/views/merchant/robot.vue')
+        path: 'orderDetail',
+        name: 'OrderDetail',
+        meta: { title: '订单流程', icon: 'BellFilled' },
+        component: () => import('@/views/merchant/orderDetail.vue')
       }
     ]
   }
@@ -130,16 +118,16 @@ export const customerRoutes = [
         component: () => import('@/views/customer/info.vue')
       },
       {
-        path: 'publish',
-        name: 'Publish',
-        meta: { title: '发布求购列表', icon: 'Promotion' },
-        component: () => import('@/views/customer/publish.vue')
+        path: 'shop',
+        name: 'Shop',
+        meta: { title: '零件购买', icon: 'Promotion' },
+        component: () => import('@/views/customer/shop.vue')
       },
       {
-        path: 'favoriteMerchant',
-        name: 'FavoriteMerchant',
-        meta: { title: '收藏商家', icon: 'StarFilled' },
-        component: () => import('@/views/customer/favoriteMerchant.vue')
+        path: 'contractList',
+        name: 'ContractList',
+        meta: { title: '订单合同', icon: 'List' },
+        component: () => import('@/views/customer/contractList.vue')
       },
       {
         path: 'message',
@@ -148,16 +136,16 @@ export const customerRoutes = [
         component: () => import('@/views/customer/message.vue')
       },
       {
-        path: 'contractList',
-        name: 'ContractList',
-        meta: { title: '合同列表', icon: 'List' },
-        component: () => import('@/views/customer/contractList.vue')
+        path: 'orderDetail',
+        name: 'OrderDetail',
+        meta: { title: '订单详情', icon: 'InfoFilled' },
+        component: () => import('@/views/customer/orderDetail.vue')
       },
       {
-        path: 'tradeLog',
-        name: 'TradeLog',
-        meta: { title: '交易日志', icon: 'InfoFilled' },
-        component: () => import('@/views/customer/tradeLog.vue')
+        path: 'favoriteMerchant',
+        name: 'FavoriteMerchant',
+        meta: { title: '收藏商家', icon: 'StarFilled' },
+        component: () => import('@/views/customer/favoriteMerchant.vue')
       },
       {
         path: 'robot',

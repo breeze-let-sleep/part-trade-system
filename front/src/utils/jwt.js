@@ -4,6 +4,10 @@
  *   import { parseJwt } from './jwt-parse.js';
  *   const payload = parseJwt(localStorage.getItem('access_token'));
  */
+
+
+//当前jwt.js仅解析payload，不验证签名——这是正确的，签名验证必须后端做
+//前端不应信任JWT内容，仅作为"通行证"使用
 export function parseJwt(token) {
   if (typeof token !== 'string' || !token) return null;
 

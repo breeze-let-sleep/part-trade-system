@@ -17,24 +17,25 @@ const roleToRoutes = {
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    token: '',
     id: 0,
-    name: '',
+    name: '',   //对应管理员判定是否是超级管理员而使用
     role: -1,
     menus: [] // 给侧边栏用的同一套数据
   }),
 
   actions: {
     // 登录：解析JWT→拿到role
-    async login(jwtToken) {
-      //----接收后端发来的jwt后解析出token中的数据存到pinia中-----
-      this.token = jwtToken
-      const { id, name, role } = parseJwt(this.token)
+    async setUserInfo(jwtToken) {
+      /* JWT（JSON Web Token）是Token的一种具体实现格式，就像"苹果"是"水果"的一种。
+      Token是泛指用于身份验证的令牌，而JWT是其中基于JSON开放标准的一种结构化Token。 */
+      //----接收后端发来的jwt后解析出用户信息数据存到pinia中-----
+      const { id, name, role } = parseJwt(jwtToken)
       this.id = id
       this.name = name
       this.role = role
-
+      // 安装路由
       await this._installRoutes()
+      // 放行
       router.replace('/')
     },
     /* 刷新后恢复：同步阻塞，保证路由加完再放行 */
@@ -43,7 +44,6 @@ export const useUserStore = defineStore('user', {
       if (!jwt) return false
       try {
         const { id, name, role } = parseJwt(jwt)
-        this.token = jwt
         this.id = id; this.name = name; this.role = role
         await this._installRoutes()
         return true
@@ -60,8 +60,20 @@ export const useUserStore = defineStore('user', {
       // 根据角色取对应路由数组
       const targetRoutes = roleToRoutes[this.role]
       if (!targetRoutes) throw new Error('非法角色')
+
+      // 如果当前角色为管理员且登录名字不为root时，删除其内adminList路由元素
+      if (this.role === 0 && this.name !== 'root') {
+        // 遍历路由数组，找到包含adminList的路由配置并移除
+        targetRoutes.forEach((route) => {
+          if (route.children) {
+            route.children = route.children.filter(child => child.name !== 'AdminList')
+          }
+        })
+      }
+      
       // 动态添加到路由表（layout 会作为根节点）
       targetRoutes.forEach(r => router.addRoute(r))
+      
       // 同时保存一份给侧边栏递归渲染
       this.menus = targetRoutes[0].children // layout 下第一层
 
@@ -81,5 +93,5 @@ export const useUserStore = defineStore('user', {
     }
   },
 
-  persist: { paths: ['token', 'id', 'name', 'role', 'menus'] }
+  persist: { paths: ['id', 'name', 'role', 'menus'] }
 })
