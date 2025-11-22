@@ -9,9 +9,9 @@
       <el-form-item label="姓名">
         <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item label="电话">
+      <!-- <el-form-item label="电话">
         <el-input v-model="form.phone" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="密码">
         <el-input v-model="form.password1" type="password" />
       </el-form-item>
@@ -44,7 +44,7 @@ const router = useRouter()
 
 const form = reactive({
   name: '',
-  phone: '',
+  // phone: '',
   password1: '',
   password2: '',
   role: '',
@@ -63,7 +63,7 @@ const goToLogin = () => {
 
 const reset = () => {
   form.name = ''
-  form.phone = ''
+  // form.phone = ''
   form.password1 = ''
   form.password2 = ''
   form.role = ''

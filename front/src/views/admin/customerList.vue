@@ -138,10 +138,6 @@ const rules = {
     { required: true, message: '请输入正确的用户名', trigger: 'blur' },
     { min:1 ,max: 15, message: '最大长度只能为15', trigger: 'blur' },
   ],
-  phone: [
-    { required: true, message: '请输入正确的电话号码', trigger: 'blur' },
-    { min: 11,max: 11, message: '请输入11位号码', trigger: 'blur' },
-  ],
   password: [
     { required: true, message: '请输入正确的密码', trigger: 'blur' },
     { min: 3, max: 18, message: '长度最少需要三位', trigger: 'blur' },

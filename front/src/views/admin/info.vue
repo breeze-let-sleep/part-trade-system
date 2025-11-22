@@ -2,6 +2,8 @@
 import { ref, reactive, onMounted } from 'vue'
 //导入element-plus的提示
 import { ElCard, ElRow, ElCol, ElInput, ElButton, ElMessage, ElUpload, ElImage, ElMessageBox,ElNotification } from 'element-plus'
+//导入请求函数
+import {getAdminList} from '@/api/admin'
 
 //个人信息对象
 const form = reactive({
@@ -77,8 +79,9 @@ const remove = () => {
 }
 
 //----------------------生命周期钩子函数----------------------
-onMounted(() => { 
+onMounted(async () => { 
   //todo: 获取用户信息
+  
 })
 </script>
 

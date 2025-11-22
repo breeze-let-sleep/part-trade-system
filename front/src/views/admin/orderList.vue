@@ -70,7 +70,8 @@ const tableData = ref([
     totalPrice: 10283,
     star:1,
     evaluate: '无评价',
-  },{
+  },
+  {
     date: '2016-05-03',
     orderId: '001',
     merchantName: 'Tom',

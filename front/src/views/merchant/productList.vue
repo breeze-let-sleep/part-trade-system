@@ -19,25 +19,26 @@ const handleCurrentChange = (val) => {
 }
 
 //-----------------搜索框相关-------------------
-// 下拉框数据
-const color = ref('')
-const colors = [
-  {value: '1',label: '红色'},{value: '2',label: '黄色'},{value: '3',label: '绿色'},
-  {value: '4',label: '蓝色'},{value: '5',label: '白色'},{value: '6',label: '黑色'},
-]
-const isPublish = ref('')
-const status = [
-  {value: '1',label: '上线'},{value: '0',label: '下线'},
-]
 //输入框数据
 const partId = ref('')
 const partName = ref('')
 const weight = ref('')
 // 时间选择器数据
 const overTime = ref('')
-//格式化时间数据
+//格式化时间数据(前后端交互使用的数据)
 const startTime = ref('')
 const endTime = ref('')
+// 下拉框数据
+const color = ref('')
+const colors = [
+  {value: '1',label: '红色'},{value: '2',label: '黄色'},{value: '3',label: '绿色'},
+  {value: '4',label: '蓝色'},{value: '5',label: '白色'},{value: '6',label: '黑色'},
+]
+//是否发布零件（状态）
+const isPublish = ref('')
+const status = [
+  {value: '1',label: '上线'},{value: '0',label: '下线'},
+]
 /*-------注意：时间选择器获得的数据是类Date数据即
 （0: Sat Nov 01 2025 00:00:00 GMT+0800 (中国标准时间)），因此要转为标准格式：yyyy-MM-dd HH:mm:ss
 方法：还原为Date数据再进行格式化即可
@@ -74,7 +75,7 @@ const tableData = [
     isPublish: 0,
     id: '001',
     name: 'Tom',
-    color: '12312312321',
+    color: '4',
     weight: 'California',
     description:'描述信息',
     singlePrice:'111',
@@ -86,7 +87,7 @@ const tableData = [
     isPublish: 1,
     id: '001',
     name: 'Tom',
-    color: '12312312321',
+    color: '1',
     weight: 'California',
     description:'描述信息',
     singlePrice:'111',
@@ -223,10 +224,6 @@ const rules = {
   name: [
     { required: true, message: '请输入正确的名称', trigger: 'blur' },
     { min:1 ,max: 15, message: '最大长度只能为15', trigger: 'blur' },
-  ],
-  weight: [
-    { required: true, message: '请输入零件重量（KG）', trigger: 'blur' },
-    { min: 1,max: 5, message: '非法输入', trigger: 'blur' },
   ],
   singlePrice: [
     { required: true, message: '请输入零件单价（元）', trigger: 'blur' },
@@ -377,7 +374,11 @@ onMounted(() => {
           </el-table-column>
           <el-table-column prop="id" label="ID" width="120" align="center"/>
           <el-table-column prop="name" label="名称" width="120" align="center"/>
-          <el-table-column prop="color" label="颜色" width="150" align="center"/>
+          <el-table-column prop="color" label="颜色" width="150" align="center">
+            <template #default="scope">
+              <span>{{ colors[scope.row.color].label }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="weight" label="重量(KG)" width="150" align="center"/>
           <el-table-column prop="description" label="描述" width="200" align="center"/>
           <el-table-column prop="singlePrice" label="单价(元)" width="150" align="center"/>
@@ -511,7 +512,7 @@ onMounted(() => {
     <!-- 表单按钮 -->
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="resetDialog">重置</el-button>
+        <el-button @click="resetDialog" v-if="dialogButtonText === '添加'">重置</el-button>
         <el-button type="primary" @click="dialogButton">
           {{dialogButtonText}}
         </el-button>
@@ -526,7 +527,7 @@ onMounted(() => {
   font-weight: bold;
 }
 .highlight-rows {
-  color: rgb(0, 162, 255);
+  color: rgb(34, 255, 0);
   font-weight: bold;
 }
 .page-title {

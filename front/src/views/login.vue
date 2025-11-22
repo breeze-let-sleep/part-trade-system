@@ -9,9 +9,9 @@
       <el-form-item label="姓名">
         <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item label="电话">
+      <!-- <el-form-item label="电话">
         <el-input v-model="form.phone" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="密码">
         <el-input v-model="form.password" type="password" />
       </el-form-item>
@@ -45,7 +45,7 @@ const router = useRouter()
 // 表单数据
 const form = reactive({
   name: '',
-  phone: '',
+  // phone: '',
   password: '',
   role: '',
 })
@@ -58,7 +58,7 @@ const goToRegister = () => {
 // 重置表单
 const reset = () => {
   form.name = ''
-  form.phone = ''
+  // form.phone = ''
   form.password = ''
   form.role = ''
 }
@@ -74,9 +74,9 @@ const doLogin = async () => {
   const jwt3="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoyLCJuYW1lIjoi5bCP5piOIiwiaWQiOjEsImV4cCI6MTc1OTkyNjc5NH0.kG4lGKEigaKkBmlNWYp0WRBTkvXh4By7fP8o3YIbTyM"
   const jwt4="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoicm9vdCIsImlkIjoxLCJleHAiOjE3NjA3NzQ1MzJ9.JzwHtRciNwQpbcvIdvBRCCbqp6tIEzA8wR82ncq0L_o"
   // 先存储jwt
-  localStorage.setItem('jwt', jwt3)    
+  localStorage.setItem('jwt', jwt4)    
   // 安装对应角色路由，设置登录的用户的基本信息
-  await userStore.setUserInfo(jwt3)              
+  await userStore.setUserInfo(jwt4)              
   router.replace('/home')
 }
 </script>

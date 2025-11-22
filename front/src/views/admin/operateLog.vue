@@ -19,15 +19,15 @@ const handleCurrentChange = (val) => {
 // 数据源
 const tableData = ref([
   {
-    date: '2016-05-03',
-    id: '001',
-    name: 'Tom',
+    createTime: '2016-05-03',
+    adminId: '001',
+    adminName: 'Tom',
     method: '删除的敏感操作',
   },
   {
-    date: '2016-05-03',
-    id: '001',
-    name: 'Tom',
+    createTime: '2016-05-03',
+    adminId: '001',
+    adminName: 'Tom',
     method: '普通操作',
   },
 ])
@@ -52,10 +52,10 @@ const tableData = ref([
           border
           style="padding: 20px;width: 100%;height: 90%;"
         >
-          <el-table-column prop="date" label="操作日期" width="180" />
-          <el-table-column prop="id" label="操作人ID" width="120" />
-          <el-table-column prop="name" label="操作人姓名" width="120" />
-          <el-table-column prop="address" label="操作方法详情" width="485">
+          <el-table-column prop="createTime" label="操作日期" width="180" />
+          <el-table-column prop="adminId" label="操作人ID" width="120" />
+          <el-table-column prop="adminName" label="操作人姓名" width="120" />
+          <el-table-column prop="method" label="操作方法详情" width="485">
             <template #default="scope">
               <span :class="{ 'highlight-row': scope.row.method.includes('删除') }">
                 {{ scope.row.method }}

@@ -137,6 +137,7 @@ onMounted(() => {
               <el-button
                 type="primary"
                 size="default"
+                :disabled="scope.row.isDeliver === 1"
                 @click="deliver(scope.$index)"
                 round
               >

@@ -93,5 +93,6 @@ export const useUserStore = defineStore('user', {
     }
   },
 
+  // 持久化pinia中的数据，确保刷新不会丢失
   persist: { paths: ['id', 'name', 'role', 'menus'] }
 })

@@ -6,6 +6,7 @@ import { Chart, registerables } from 'chart.js'
 Chart.register(...registerables)
 
 // -----------------数据统计-----------------
+//第一部分
 //系统总用户数（管理员，商家，顾客）
 const allUsers = ref(2671)
 // 已完成订单数
@@ -25,7 +26,17 @@ const getStatistics = async () => {
   //todo：获取数据统计相关参数
 }
 
-// -----------------图表显示-----------------
+// -----------------图表数据-----------------
+//柱状图数据
+const barLabels = ref(['零件a', '零件c', '零件b', '其他'])
+const barData = ref([120, 190, 80, 150])
+//折线图数据
+const lineLabels = ref(['8月', '9月', '10月', '11月'])
+const lineData = ref([24, 56, 55, 40])
+// 饼状图数据
+const pieLabels = ref(['已完成订单数', '总订单数'])
+const pieData = ref([hasDoneOrders.value, allOrders.value])
+// -----------------图表生成-----------------
 //柱状图：零件销量前3名
 const barRef = ref(null)
 //饼状图：已完成订单数占总数比
@@ -43,11 +54,11 @@ onMounted(() => {
   new Chart(barRef.value, {
     type: 'bar',
     data: {
-      labels: ['零件a', '零件c', '零件b', '其他'],
+      labels: barLabels.value,
       datasets: [
         {
           label: '销量（件）',
-          data: [120, 190, 80, 150],
+          data: barData.value,
           backgroundColor: 'rgba(54, 162, 235)'
         }
       ]
@@ -55,20 +66,17 @@ onMounted(() => {
     options: {
       responsive: true,
       plugins: {
-        title: { display: true, text: '销售零件前三分布图' }
+        title: { display: true, text: '零件销售前三分布图' }
       }
     }
   }),
   new Chart(pieRef.value, {
     type: 'pie',
     data: {
-      labels: [
-        '已完成订单数',
-        '总订单数',
-      ],
+      labels: pieLabels.value,
       datasets: [{
-        label: '已完成订单数',
-        data: [1627, 2529],
+        label: '数据详情',
+        data: pieData.value,
         backgroundColor: [
           'rgb(255, 99, 132)',
           'rgb(54, 162, 235)',
@@ -83,10 +91,10 @@ onMounted(() => {
   new Chart(lineRef.value, {
     type: 'line',
     data: {
-      labels: ["8月","9月", "10月", "11月"],
+      labels: lineLabels.value,
       datasets: [{
         label: '近四月月销量统计图',
-        data: [24, 56, 55, 40],
+        data: lineData.value,
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1
