@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyltest.mapper.CustomerMapper">
+
+    <!-- 更新顾客信息 -->
+    <update id="updateCustomer">
+        update customer
+        <set>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="avatar != null and avatar != ''">avatar = #{avatar},</if>
+            update_time = #{updateTime}
+        </set>
+        where id = #{id}
+    </update>
+    <!-- 模糊查询顾客信息 -->
+    <select id="likeCustomers" resultType="com.hyltest.pojo.entity.Customer">
+        select id,id, name, phone, address, avatar, create_time, update_time from customer
+        <where>
+            <if test="likeName != null and likeName != ''">
+                name like concat('%', #{likeName}, '%')
+            </if>
+            <if test="likeAddress != null and likeAddress != ''">
+                and address like concat('%', #{likeAddress}, '%')
+            </if>
+            <if test="startTime != null and endTime != null">
+                and create_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

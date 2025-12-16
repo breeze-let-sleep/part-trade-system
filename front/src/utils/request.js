@@ -11,6 +11,7 @@ const request=axios.create(
 request.interceptors.request.use(
   config=>{
     let jwt=localStorage.getItem('jwt')
+    // console.log(jwt)
     if(jwt){
       config.headers.token=jwt
     }

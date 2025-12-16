@@ -73,7 +73,7 @@ public class VOrderCompleteInfo implements Serializable {
     private String merchantName;
 
     /**
-     * 名称
+     * 零件名称
      */
     private String partName;
 
@@ -96,6 +96,12 @@ public class VOrderCompleteInfo implements Serializable {
      * 顾客名字
      */
     private String customerName;
+
+    //------------补充属性
+
+    private LocalDateTime updateTime;
+    private Integer star;
+    private String evaluate;
 
 
 }

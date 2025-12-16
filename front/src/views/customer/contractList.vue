@@ -3,20 +3,23 @@ import {ref,reactive,onMounted,nextTick,watch} from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
-
+import {getPageList, getOrderDetail,signatureContract} from '@/api/contract'
+import {removeOrder} from '@/api/order'
 //-----------------分页相关-------------------
 // 分页数据
 const page = reactive({
-  //todo：在钩子函数中进行获取数据
-  total: 100,
+  total: '',
   pageSize: 7,
   currentPage: 1
 })
 
 // 页码改变
-const handleCurrentChange = (val) => {
+const handleCurrentChange = async (val) => {
   console.log(`当前页: ${val}`)
-  // TODO: 调用后端API获取对应页的数据
+  page.currentPage = val
+  const res=await getPageList(page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value=res.data.rows
 }
 
 //-----------------头部相关-------------------
@@ -34,37 +37,16 @@ watch(hasCompleted, (newValue, oldValue) => {
 //------------------表格相关--------------------
 const colors = ['红色', '黄色', '绿色', '蓝色', '白色', '黑色']
 // 订单详情
-const orderDetail = ref({ //根据点击的订单号去获取对应的数据回来赋值给orderDetail
-  orderId: '001',  //订单号
-  customer: 'Tom',
-  merchant: 'tom',
-  part: 'Tom',
-  color: 1,
-  weight: 10,
-  singlePrice: 20,
-  amount: 15,
-  totalPrice: 20,
-  createTime: '2025-10-10 09:00:00',
-})
+const orderDetail = ref()
 
 //表格数据
-const tableData = [
-  //todo：在钩子函数中进行获取数据
-  {
-    id: '001',  //合同id（主键）
-    orderId: '001', //订单号
-    partId: 'Tom',
-    amount: 1,
-    totalPrice: 10,
-    createTime: '2025-10-10 09:00:00',
-    updateTime: '2025-10-10 09:00:00',
-  }
-]
+const tableData = ref()
 
 //展示详情
-const showDetail=(index) => { 
+const showDetail=async(index) => { 
   //index为当前行索引
-  //todo：获取当前订单id去后端请求订单详情赋值给orderDetail进行展示（对话框）
+  const res=await getOrderDetail(tableData.value[index].orderId)
+  orderDetail.value = res.data
   dialogVisible.value = true
 }
 //签名
@@ -74,12 +56,20 @@ const signature=(index) => {
     cancelButtonText: '取消',
     type: 'success',
   })
-    .then(({ value }) => {
-      // todo: 将value发送到后端进行保存
-      ElMessage({
-        type: 'success',
-        message: `“${value}”您已成功签署该订单合同`,
-      })
+    .then(async({ value }) => { //value为用户输入的签名内容
+      const res = await signatureContract(tableData.value[index].orderId,value)
+      if(res.code === 1){
+        ElMessage({
+          type: 'success',
+          message: `“${value}”您已成功签署该订单合同`,
+        })
+        const res=await getPageList(page.currentPage,page.pageSize)
+        page.total=res.data.total
+        tableData.value=res.data.rows
+      }else{ 
+        ElMessage.primary(res.data)
+      }
+      
     })
     .catch(() => {
       ElMessage({
@@ -100,12 +90,17 @@ const cancel=(index) => {
     }
   )
   // then: 确定按钮点击事件
-    .then(({value}) => {
-      //todo：发送请求到后端删除该订单
-      ElMessage({
-        type: 'success',
-        message: '取消成功',
-      })
+    .then(async() => {
+      const res=await removeOrder(tableData.value[index].orderId)
+      if(res.code === 1){
+        ElMessage({
+          type: 'success',
+          message: '取消成功',
+        })
+        const res=await getPageList(page.currentPage,page.pageSize)
+        page.total=res.data.total
+        tableData.value=res.data.rows
+      }
     })
   // catch: 取消按钮点击事件
     .catch(() => {
@@ -129,8 +124,10 @@ const close = () => {
 
 
 //-----------------生命周期钩子函数----------------------
-onMounted(() => { 
-  //todo: ......
+onMounted(async() => { 
+  const res=await getPageList(page.currentPage,page.pageSize)
+  page.total=res.data.total
+  tableData.value=res.data.rows
 })
 </script>
 
@@ -160,11 +157,10 @@ onMounted(() => {
       <el-main class="main-content">
         <el-table :data="tableData" style="height: 90%">
           <el-table-column prop="orderId" label="订单号" width="120" align="center"/>
-          <el-table-column prop="partId" label="购买零件ID" width="120" align="center"/>
+          <el-table-column prop="partName" label="购买零件名称" width="120" align="center"/>
           <el-table-column prop="amount" label="购买数量(件)" width="150" align="center"/>
           <el-table-column prop="totalPrice" label="金额(元)" width="150" align="center"/>
           <el-table-column prop="createTime" label="创建时间" width="180" align="center"/>
-          <el-table-column prop="updateTime" label="修改时间" width="180" align="center"/>
           <el-table-column fixed="right" label="操作" min-width="300" align="center">
             <template #default="scope">
               <!-- 
@@ -224,11 +220,11 @@ onMounted(() => {
     align-center
   >
     <p style="text-align: left;font-size: 16px;">
-      订单号：<span>{{orderDetail.orderId}}</span>，由采购方<span>{{orderDetail.customer}}</span>与
-      供应方<span>{{orderDetail.merchant}}</span>于<span>{{orderDetail.createTime}}</span>签订本订单合同，
-      采购方同意向供应方采购<span>{{orderDetail.part}}</span>（颜色：<span>{{colors[orderDetail.color-1]}}</span>，
-      重量：<span>{{orderDetail.weight}}</span>KG），该零件单价为<span>{{orderDetail.singlePrice}}</span>元，
-      购买数量为<span>{{orderDetail.amount}}</span>，订单总价合计<span>{{orderDetail.totalPrice}}</span>，
+      订单号：[<span>{{orderDetail.orderId}}</span>]，由采购方【<span>{{orderDetail.customerName}}</span>】与
+      供应方【<span>{{orderDetail.merchantName}}</span>】于<span>{{orderDetail.createTime}}</span>签订本订单合同，
+      采购方同意向供应方采购【<span>{{orderDetail.partName}}</span>】（颜色：<span>{{colors[orderDetail.color-1]}}</span>，
+      重量：<span>{{orderDetail.weight}}</span>KG），该零件单价为[<span>{{orderDetail.singlePrice}}</span>元]，
+      购买数量为[<span>{{orderDetail.amount}}</span>件]，订单总价合计[<span>{{orderDetail.totalPrice}}</span>元]，
       双方确认上述交易信息无误，同意按此履行交货及付款等相关义务。
     </p>
     <!-- 表单按钮 -->

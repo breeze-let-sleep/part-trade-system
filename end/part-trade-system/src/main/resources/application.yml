@@ -1,6 +1,12 @@
 spring:
   application:
     name: part-trade-system
+  #配置文件上传的配置信息
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 10MB
+
   #配置ai相关配置信息
   ai:
     openai:
@@ -10,17 +16,23 @@ spring:
         options:
           model: qwen-max # 模型名称，可更改 https://help.aliyun.com/zh/model-studio/getting-started/models
           temperature: 0.8 # 模型温度，值越大，输出结果越随机
+
   #配置MyBatis连接数据库的相关配置信息
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/part_trade_system
     username: root
     password: 1234
-
-#配置MyBatis往控制台打印执行sql语句的日志信息
-#mybatis:
+  #配置MyBatis往控制台打印执行sql语句的日志信息
+  #mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     #开启驼峰命名：字段名（part_id）和属性名（partId）符合驼峰命名规则则自动映射
     map-underscore-to-camel-case: true
 
+#阿里云OSS的bucket配置信息
+aliyun:
+  oss:
+    endpoint: ${ENDPOINT}
+    bucketName: ${BUCKET_NAME}
+    region: ${REGION}

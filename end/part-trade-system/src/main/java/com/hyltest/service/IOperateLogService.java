@@ -1,6 +1,7 @@
 package com.hyltest.service;
 
 
+import com.hyltest.pojo.PageResult;
 
 /**
  * <p>
@@ -12,4 +13,11 @@ package com.hyltest.service;
  */
 public interface IOperateLogService{
 
+    /**
+     * 获取操作日志列表
+     * @param currentPage 当前页
+     * @param pageSize 页大小
+     * @return 操作日志列表
+     */
+    PageResult getLogs(Integer currentPage, Integer pageSize);
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--上面就是xml文件的头信息，也叫约束，是固定的-->
+<mapper namespace="com.hyltest.mapper.AdminMapper">
+    <update id="updateAdmin">
+        update admin
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            update_time = #{updateTime}
+        </set>
+        where id = #{id}
+    </update>
+    <select id="selectByLike" resultType="com.hyltest.pojo.entity.Admin">
+        select id, name, phone, avatar, create_time, update_time
+        from admin
+        <where>
+            <if test="input != null and input != ''">
+                and name like concat('%', #{input}, '%')
+            </if>
+            <!-- 只有起始和结束时间都不为空时才添加时间条件 -->
+            <if test="startTime != null and endTime != null">
+                and create_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+</mapper>

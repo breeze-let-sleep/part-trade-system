@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--上面就是xml文件的头信息，也叫约束，是固定的-->
+<mapper namespace="com.hyltest.mapper.MerchantMapper">
+    <update id="updateMerchant">
+        update merchant
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="address != null">
+                address = #{address},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            update_time = #{updateTime}
+        </set>
+        where id = #{id}
+    </update>
+    <select id="searchMerchants" resultType="com.hyltest.pojo.entity.Merchant">
+        select id, name, phone, address, avatar, description, create_time, update_time
+        from merchant
+        <where>
+            <if test="likeName != null and likeName != ''">
+                and name like concat('%', #{likeName}, '%')
+            </if>
+            <if test="likeAddress != null and likeAddress != ''">
+                and address like concat('%', #{likeAddress}, '%')
+            </if>
+            <!-- 只有起始和结束时间都不为空时才添加时间条件 -->
+            <if test="startTime != null and endTime != null">
+                and create_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,7 +1,7 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive,onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-
+import { getEndLikeOrders } from '@/api/order'
 //-----------------搜索相关-------------------
 // 零件名
 const partName = ref('')
@@ -24,16 +24,30 @@ const star = ref(0)
 */
 // 格式化时间
 const toFormatTime = (str) => { 
-  const d = new Date(str)                      // 先转 Date
-  const pad = n => n.toString().padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}
-   ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+  if (!str) return null; // 处理空值
+  
+  const d = new Date(str);
+  if (isNaN(d.getTime())) return null; // 处理无效日期
+  
+  const pad = n => n.toString().padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 // 搜索
-const search = () => { 
-  startTime.value = toFormatTime(overTime.value[0])
-  endTime.value = toFormatTime(overTime.value[1])
-  //todo：发送参数到后端获取数据
+const search =async () => { 
+if (overTime.value === null || overTime.value === undefined) {
+    startTime.value = null
+    endTime.value = null
+  }else{
+    startTime.value = toFormatTime(overTime.value[0])
+    endTime.value = toFormatTime(overTime.value[1])
+  }
+  //-----------------有值传值，无值不传（Axios 的params参数会自动忽略undefined）
+  if(star.value===0){
+    star.value = null
+  }
+  const res=await getEndLikeOrders(partName.value,orderId.value,star.value,startTime.value,endTime.value,page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value=res.data.rows
 }
 //重置搜索框
 const resetSearch = () => { 
@@ -46,44 +60,28 @@ const resetSearch = () => {
 //-----------------分页相关-------------------
 // 分页数据
 const page = reactive({
-  //todo：在钩子函数中进行获取数据
-  total: 100,
+  total: '',
   pageSize: 7,
   currentPage: 1
 })
 
 // 页码改变
-const handleCurrentChange = (val) => {
+const handleCurrentChange = async(val) => {
   console.log(`当前页: ${val}`)
-  // TODO: 调用后端API获取对应页的数据
+  page.currentPage = val
+  const res = await getEndLikeOrders(null,null,null,null,null,page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value = res.data.rows
 }
 //-----------------表格相关-------------------
 // 数据源
-const tableData = ref([
-  {
-    date: '2016-05-03',
-    orderId: '001',
-    merchantName: 'Tom',
-    customerName: 'Jerry',
-    partName: 'Tom',
-    amount: 1000,
-    totalPrice: 10283,
-    star:1,
-    evaluate: '无评价',
-  },
-  {
-    date: '2016-05-03',
-    orderId: '001',
-    merchantName: 'Tom',
-    customerName: 'Jerry',
-    partName: 'Tom',
-    amount: 1000,
-    totalPrice: 10283,
-    star:4,
-    evaluate: '无评价',
-  },
-  
-])
+const tableData = ref()
+
+onMounted(async() => { 
+  const res = await getEndLikeOrders(null,null,null,null,null,page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value = res.data.rows
+})
 </script>
 
 <template>
@@ -135,7 +133,7 @@ const tableData = ref([
               <label class="search-label">订单星级：</label>
               <el-input-number 
                 v-model="star" 
-                :min="1" 
+                :min="0" 
                 :max="5" 
                 @change="handleChange"
                 style="width: 40px;"
@@ -158,12 +156,12 @@ const tableData = ref([
           border
           style="padding: 20px;width: 100%;height: 90%;"
         >
-          <el-table-column prop="date" label="交易日期" width="160" />
-          <el-table-column prop="orderId" label="订单ID" width="120" />
-          <el-table-column prop="merchantName" label="供应商名字" width="120" />
-          <el-table-column prop="customerName" label="顾客名字" width="120" />
-          <el-table-column prop="partName" label="零件名字" width="120" />
-          <el-table-column prop="amount" label="交易数量" width="120" />
+          <el-table-column prop="updateTime" label="最后更新时间" width="160" />
+          <el-table-column prop="orderId" label="订单编号" width="120" />
+          <el-table-column prop="merchantName" label="供应商名字" width="160" />
+          <el-table-column prop="customerName" label="顾客名字" width="160" />
+          <el-table-column prop="partName" label="零件名字" width="160" />
+          <el-table-column prop="amount" label="交易数量" width="160" />
           <el-table-column prop="totalPrice" label="交易金额" width="120" />
           <el-table-column prop="star" label="星级评价" width="120" >
             <template #default="scope">

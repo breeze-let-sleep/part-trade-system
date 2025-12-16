@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--上面就是xml文件的头信息，也叫约束，是固定的-->
+<mapper namespace="com.hyltest.mapper.VOrderDetailCompleteMapper">
+
+    <select id="selectEndOrderList" resultType="com.hyltest.pojo.entity.VOrderCompleteInfo">
+        select
+            vodc.order_id,vodc.merchant_name,vodc.customer_name,vodc.part_name,vodc.amount,vodc.total_price,star,evaluate,updateTime
+        from v_order_detail_complete vodc
+        inner join part_trade_system.v_order_complete_info voci
+        on vodc.order_id = voci.order_id
+            <where>
+                <if test="partName != null and partName != ''">
+                    AND vodc.part_name LIKE CONCAT('%', #{partName}, '%')
+                </if>
+                <if test="orderId != null and orderId != ''">
+                    AND vodc.order_id = #{orderId}
+                </if>
+                <if test="star != null and star != ''">
+                    AND star = #{star}
+                </if>
+                <if test="startTime != null and endTime != null">
+                    and update_time between #{startTime} and #{endTime}
+                </if>
+            </where>
+        limit #{start},#{pageSize}
+    </select>
+</mapper>

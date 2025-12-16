@@ -2,22 +2,24 @@
 import { ref, reactive, onMounted } from 'vue'
 //导入element-plus的提示
 import { ElCard, ElRow, ElCol, ElInput, ElButton, ElMessage, ElUpload, ElImage, ElMessageBox,ElNotification } from 'element-plus'
+import { useUserStore } from '@/store/user'
+import {getInfoById,updateInfo,deleteCustomer} from '@/api/customer'
 
-
-
+const userStore = useUserStore()
+const token = ref('')
 //个人信息对象
 const form = reactive({
-  id: '',
+  id: userStore.id,
   name: '',
   phone: '',
   password: '',
   address: '',
-  avatar: 'https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg'
+  avatar: ''
 })
 
 //--------------------头像上传----------------------
-const handleAvatarSuccess = (file) => {
-  //todo:上传成功，将头像地址保存到form.avatar中
+const handleAvatarSuccess = (response,file) => {
+  form.avatar = response.data
 }
 
 //上传文件格式与大小检查
@@ -41,14 +43,17 @@ const alter = () => {
   hasAlter.value = true
 }
 //保存
-const save = () => { 
-  //todo: 请求后端进行数据的更新
-  hasAlter.value = false
-  ElNotification({
-    title: '保存成功',
-    message: '您的信息已成功修改',
-    type: 'success',
-  })
+const save =async () => { 
+  const res=await updateInfo(form)
+  if(res.code===1){
+    hasAlter.value = false
+    ElNotification({
+      title: '保存成功',
+      message: '您的信息已成功修改',
+      type: 'success',
+    })
+    return
+  }
 }
 //注销
 const remove = () => { 
@@ -62,12 +67,15 @@ const remove = () => {
     }
   )
   // then: 确定按钮点击事件
-    .then(() => {
-      //todo：发送请求到后端删除该用户并退出
-      ElMessage({
-        type: 'success',
-        message: '注销成功',
-      })
+    .then(async() => {
+      const res=await deleteCustomer(form.id)
+      if(res.code===1){
+        userStore.logout()
+        ElMessage({
+          type: 'success',
+          message: '注销成功',
+        })
+      }
     })
   // catch: 取消按钮点击事件
     .catch(() => {
@@ -80,8 +88,13 @@ const remove = () => {
 }
 
 //----------------------生命周期钩子函数----------------------
-onMounted(() => { 
-  //todo: 获取用户信息
+onMounted(async() => { 
+  token.value = localStorage.getItem('jwt')
+  const res=await getInfoById(form.id)
+  form.name = res.data.name
+  form.phone = res.data.phone
+  form.address = res.data.address
+  form.avatar = res.data.avatar
 })
 </script>
 
@@ -98,7 +111,8 @@ onMounted(() => {
           <el-col :span="24">
             <el-upload
               class="avatar-uploader"
-              action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+              action="/api/upload"
+              :headers="{'token':token}"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
@@ -133,7 +147,7 @@ onMounted(() => {
             </el-col>
             <el-col :span="3" class="label-col">密码：</el-col>
             <el-col :span="9">
-              <el-input v-model="form.password" type="password" class="form-input" />
+              <el-input :disabled="!hasAlter" v-model="form.password" type="password" class="form-input" />
             </el-col>
           </el-row>
           <el-row :gutter="20" class="form-row">

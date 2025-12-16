@@ -1,17 +1,12 @@
 <script setup>
 import { ref, reactive,onMounted } from 'vue'
 import { ElNotification } from 'element-plus'
+import {getPaidMessage,payOrder} from '@/api/order'
+
+
 //-----------------表格相关-------------------
 // 数据源
-const msgList = ref([
-  {
-    createTime: '2016-05-03 10:00:00',
-    id: '001',
-    partName: 'Tom',
-    amount: 10,
-    totalPrice: 100,
-  },
-])
+const msgList = ref()
 //当前行索引
 const currentIndex = ref(null)
 // 打开支付对话框进行支付
@@ -27,14 +22,24 @@ const paidWay = ref(1)
 // 对话框可见
 const dialogVisible = ref(false)
 // 支付
-const pay=() => { 
-  //todo：发送支付请求到后端（通过currentIndex获取订单号作为参数）
+const pay=async() => { 
+  const res = await payOrder(msgList.value[currentIndex.value].orderId)
+  if(res.code === 1){
+    ElNotification({
+      title: '支付成功',
+      message: '订单成功支付，请耐心等待供应商发货后在订单详情页面查看具体订单流程',
+      type: 'success',
+    })
+    const res = await getPaidMessage()
+    msgList.value = res.data.rows
+  }else{
+    ElNotification({
+      title: '支付失败',
+      message: '订单支付失败，若已经成功扣费请勿重复提交并联系管理员',
+      type: 'error',
+    })
+  }
   dialogVisible.value = false
-  ElNotification({
-    title: '支付成功',
-    message: '订单成功支付，可前往订单详情页面查看具体订单流程',
-    type: 'success',
-  })
 }
 //取消支付
 const cancel=() => { 
@@ -42,8 +47,9 @@ const cancel=() => {
 }
 
 //-------------------生命周期函数-------------------
-onMounted(() => { 
-  // todo：获取待支付订单消息（is_paid=0的订单）
+onMounted(async() => { 
+  const res = await getPaidMessage()
+  msgList.value = res.data.rows
 })
 </script>
 
@@ -65,7 +71,7 @@ onMounted(() => {
           style="padding: 20px;width: 100%;height: 90%;"
         >
           <el-table-column prop="createTime" label="购买日期" width="180" />
-          <el-table-column prop="id" label="订单号" width="160" />
+          <el-table-column prop="orderId" label="订单号" width="160" />
           <el-table-column prop="partName" label="购买零件" width="140" />
           <el-table-column prop="amount" label="购买数量" width="140" />
           <el-table-column prop="totalPrice" label="待支付金额(元)" width="180" >
@@ -80,7 +86,6 @@ onMounted(() => {
             </template>
           </el-table-column>
         </el-table>
-        <el-empty v-if="msgList.length === 0" description="暂无消息" />
       </el-main>
       <!-- 对话框 -->
       <el-dialog
@@ -92,7 +97,7 @@ onMounted(() => {
         <div>
           <el-row gutter="10">
             <el-col :span="24">
-              <span class="col-span">订单号：[{{ msgList[currentIndex].id }}]，共需您支付的金额为：</span>
+              <span class="col-span">订单号：[{{ msgList[currentIndex].orderId }}]，共需您支付的金额为：</span>
             </el-col>
           </el-row>
           <el-row gutter="10" justify="center">

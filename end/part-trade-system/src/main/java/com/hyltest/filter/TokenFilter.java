@@ -7,12 +7,15 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+
 import java.io.IOException;
 import java.util.Map;
 
 
 @Slf4j
-@WebFilter(urlPatterns = "/*")
+@ServletComponentScan
+@WebFilter(urlPatterns = "/*", asyncSupported = true)
 public class TokenFilter implements Filter {
 
     @Override
@@ -26,11 +29,28 @@ public class TokenFilter implements Filter {
         HttpServletRequest  request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        /*
+          智能客服会先发送预检请求option，响应200；之后发送正式请求fetch，必须允许它携带自己的headers
+          否则会造成跨域请求失败问题
+         */
+        // 1. 【关键】前置设置CORS头（所有请求都需要）
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers",
+                           "token, Content-Type, Cache-Control, Accept");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        // 2. 【关键】直接响应OPTIONS请求，不再传递
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK); // 200 OK
+            return; // 终止请求链，不再执行后续过滤器
+        }
+
         //获取请求的资源路径
         String requestURI = request.getRequestURI();
+        log.info("请求的资源路径为：{}", requestURI);
 
         //1、判断请求的资源路径是否是登录页面/login，是则直接放行
-        if (requestURI.contains("login")){
+        if (requestURI.contains("login") || requestURI.contains("register")){
             filterChain.doFilter(request, response);
             return;
         }

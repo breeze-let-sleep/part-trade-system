@@ -1,21 +1,24 @@
 <script setup>
 import {ref,reactive,onMounted,nextTick} from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox,ElNotification } from 'element-plus'
+import {updatePart,getPartsList,likeParts,deletePart,addPart,publishPart} from '@/api/part'
 
 //-----------------分页相关-------------------
 // 分页数据
 const page = reactive({
-  //todo：在钩子函数中进行获取数据
-  total: 100,
+  total: '',
   pageSize: 7,
   currentPage: 1
 })
 
 // 页码改变
-const handleCurrentChange = (val) => {
+const handleCurrentChange = async(val) => {
   console.log(`当前页: ${val}`)
-  // TODO: 调用后端API获取对应页的数据
+  page.currentPage = val
+  const res=await getPartsList(page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value=res.data.rows
 }
 
 //-----------------搜索框相关-------------------
@@ -24,37 +27,44 @@ const partId = ref('')
 const partName = ref('')
 const weight = ref('')
 // 时间选择器数据
-const overTime = ref('')
+const overTime = ref(null)
 //格式化时间数据(前后端交互使用的数据)
 const startTime = ref('')
 const endTime = ref('')
 // 下拉框数据
 const color = ref('')
-const colors = [
-  {value: '1',label: '红色'},{value: '2',label: '黄色'},{value: '3',label: '绿色'},
-  {value: '4',label: '蓝色'},{value: '5',label: '白色'},{value: '6',label: '黑色'},
-]
+const colors = ['红色','黄色','绿色','蓝色','白色','黑色']
 //是否发布零件（状态）
 const isPublish = ref('')
-const status = [
-  {value: '1',label: '上线'},{value: '0',label: '下线'},
-]
+const status = ['下架','上线']
 /*-------注意：时间选择器获得的数据是类Date数据即
 （0: Sat Nov 01 2025 00:00:00 GMT+0800 (中国标准时间)），因此要转为标准格式：yyyy-MM-dd HH:mm:ss
 方法：还原为Date数据再进行格式化即可
 */
 // 格式化时间
 const toFormatTime = (str) => { 
-  const d = new Date(str)                      // 先转 Date
-  const pad = n => n.toString().padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}
-   ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+  if (!str) return null; // 处理空值
+  
+  const d = new Date(str);
+  if (isNaN(d.getTime())) return null; // 处理无效日期
+  
+  const pad = n => n.toString().padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 // 搜索
-const search = () => { 
-  startTime.value = toFormatTime(overTime.value[0])
-  endTime.value = toFormatTime(overTime.value[1])
-  //todo：发送参数到后端获取数据
+const search =async () => { 
+  console.log(`isPublish: ${isPublish.value}`)
+  if (overTime.value === null) {
+    startTime.value = null
+    endTime.value = null
+  }else{
+    startTime.value = toFormatTime(overTime.value[0])
+    endTime.value = toFormatTime(overTime.value[1])
+  }
+  //-----------------有值传值，无值不传（Axios 的params参数会自动忽略undefined）
+  const res=await likeParts(partId.value,partName.value,weight.value,color.value,startTime.value,endTime.value,isPublish.value)
+  page.total = res.data.total
+  tableData.value=res.data.rows
 }
 //重置搜索框
 const resetSearch = () => { 
@@ -69,33 +79,7 @@ const resetSearch = () => {
 
 //------------------表格相关--------------------
 //表格数据
-const tableData = [
-  //todo：在钩子函数中进行获取数据
-  {
-    isPublish: 0,
-    id: '001',
-    name: 'Tom',
-    color: '4',
-    weight: 'California',
-    description:'描述信息',
-    singlePrice:'111',
-    inventory: '12312312321',
-    createTime: '2025-10-10 09:00:00',
-    updateTime: '2025-10-10 09:00:00',
-  },
-  {
-    isPublish: 1,
-    id: '001',
-    name: 'Tom',
-    color: '1',
-    weight: 'California',
-    description:'描述信息',
-    singlePrice:'111',
-    inventory: '12312312321',
-    createTime: '2025-10-10 09:00:00',
-    updateTime: '2025-10-10 09:00:00',
-  }
-]
+const tableData = ref([])
 
 //编辑行数据
 const editRow=(index) => { 
@@ -103,13 +87,13 @@ const editRow=(index) => {
   //index为当前行索引
   dialogTitle.value = '编辑信息'
   dialogButtonText.value = '保存'
-  dialogData.id = tableData[index].id
-  dialogData.name = tableData[index].name
-  dialogData.color = tableData[index].color
-  dialogData.weight = tableData[index].weight
-  dialogData.description = tableData[index].description
-  dialogData.singlePrice = tableData[index].singlePrice
-  dialogData.inventory = tableData[index].inventory
+  dialogData.id = tableData.value[index].partId
+  dialogData.name = tableData.value[index].partName
+  dialogData.color = tableData.value[index].color
+  dialogData.weight = tableData.value[index].weight
+  dialogData.description = tableData.value[index].description
+  dialogData.singlePrice = tableData.value[index].singlePrice
+  dialogData.inventory = tableData.value[index].inventory
   dialogVisible.value = true
 }
 
@@ -126,12 +110,20 @@ const deleteRow = (index) => {
     }
   )
   // then: 确定按钮点击事件
-    .then(() => {
-      //todo：发送请求到后端删除该用户
-      ElMessage({
-        type: 'success',
-        message: '删除成功',
-      })
+    .then(async() => {
+      const res = await deletePart(tableData.value[index].partId)
+      handleCurrentChange(page.currentPage)
+      if (res.code === 1) {
+        ElMessage({
+          type: 'success',
+          message: '删除成功',
+        })
+      }else {
+        ElMessage({
+          type: 'error',
+          message: '删除失败，请重试',
+        })
+      }
     })
   // catch: 取消按钮点击事件
     .catch(() => {
@@ -154,12 +146,20 @@ const goOn = (index) => {
     }
   )
   // then: 确定按钮点击事件
-    .then(() => {
-      //todo：发送请求到后端删除该用户
-      ElMessage({
-        type: 'success',
-        message: '上线成功',
-      })
+    .then(async() => {
+      const res = await publishPart(tableData.value[index].partId,1)
+      if(res.code===1){ 
+        ElMessage({
+          type: 'success',
+          message: '上线成功',
+        })
+        handleCurrentChange(page.currentPage)
+      }else{
+        ElMessage({
+          type: 'error',
+          message: '上线失败，请重试',
+        })
+      }
     })
   // catch: 取消按钮点击事件
     .catch(() => {
@@ -182,12 +182,20 @@ const goOff = (index) => {
     }
   )
   // then: 确定按钮点击事件
-    .then(() => {
-      //todo：发送请求到后端删除该用户
-      ElMessage({
-        type: 'success',
-        message: '下架成功',
-      })
+    .then(async() => {
+      const res = await publishPart(tableData.value[index].partId,0)
+      if(res.code===1){ 
+        ElMessage({
+          type: 'success',
+          message: '下架成功',
+        })
+        handleCurrentChange(page.currentPage)
+      }else{
+        ElMessage({
+          type: 'error',
+          message: '下架失败，请重试',
+        })
+      }
     })
   // catch: 取消按钮点击事件
     .catch(() => {
@@ -201,7 +209,7 @@ const goOff = (index) => {
 
 //-----------------对话框相关-------------------
 //对话框显示标志
-const dialogVisible = ref(false)
+let dialogVisible = ref(false)
 //对话框标题
 const dialogTitle = ref('') //根据点击按钮进行设置
 //对话框按钮显示文字
@@ -225,6 +233,13 @@ const rules = {
     { required: true, message: '请输入正确的名称', trigger: 'blur' },
     { min:1 ,max: 15, message: '最大长度只能为15', trigger: 'blur' },
   ],
+  color: [
+    { required: true, message: '请输入零件颜色', trigger: 'blur' },
+  ],
+  weight: [
+    { required: true, message: '请输入零件重量（kg）', trigger: 'blur' },
+    { min: 0.1,max: 1000.00, message: '非法输入', trigger: 'blur' },
+  ],
   singlePrice: [
     { required: true, message: '请输入零件单价（元）', trigger: 'blur' },
     { min: 1,max: 10, message: '非法输入', trigger: 'blur' },
@@ -233,6 +248,10 @@ const rules = {
     { required: true, message: '请输入零件库存', trigger: 'blur' },
     { min: 1, max: 30, message: '非法输入', trigger: 'blur' },
   ],
+  description: [
+    { required: true, message: '请输入零件描述', trigger: 'blur' },
+    { min: 1, max: 100, message: '非法输入', trigger: 'blur' },
+  ]
 }
 //打开对话框（添加按钮事件）
 const openAddDialog = () => {
@@ -243,12 +262,28 @@ const openAddDialog = () => {
   dialogVisible.value = true
 }
 //对话框按钮点击事件：根据按钮文本内容执行保存或修改
-const dialogButton = () => { 
+const dialogButton =async () => { 
+  let res = ''
   if (dialogButtonText.value === '添加') {
-    //todo：发送请求到后端添加
+    res=await addPart(dialogData)
   }
   if (dialogButtonText.value === '保存') {
-    //todo：发送请求到后端修改信息
+    res=await updatePart(dialogData)
+  }
+  if (res.code === 1) {
+    ElNotification({
+      title: '操作成功',
+      message: '数据已经正确更新',
+      type: 'success',
+    })
+    dialogVisible.value = false
+    handleCurrentChange(page.currentPage)
+  }else {
+    ElNotification({
+      title: '操作失败',
+      message: '数据更新失败，请重试',
+      type: 'error',
+    })
   }
 }
 // 重置对话框
@@ -269,8 +304,10 @@ const resetDialog = () => {
 }
 
 //-----------------生命周期钩子函数----------------------
-onMounted(() => { 
-  //todo: ......
+onMounted(async() => { 
+  const res = await getPartsList(page.currentPage, page.pageSize)
+  page.total = res.data.total
+  tableData.value = res.data.rows
 })
 </script>
 
@@ -309,10 +346,10 @@ onMounted(() => {
                 class="search-input"
               >
                 <el-option
-                  v-for="item in colors"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="(item, index) in colors"
+                  :key="index"
+                  :label="item"
+                  :value="index+1"
                 />
               </el-select>
               <label class="search-label">重量KG：</label>
@@ -348,10 +385,10 @@ onMounted(() => {
                 class="search-input"
               >
                 <el-option
-                  v-for="item in status"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="(item, index) in status"
+                  :key="index"
+                  :label="item"
+                  :value="index"
                 />
               </el-select>
             <el-button class="search-button" type="primary" plain @click="search">搜索</el-button>
@@ -367,16 +404,16 @@ onMounted(() => {
         <el-table :data="tableData" style="height: 90%">
           <el-table-column fixed="left" prop="isPublish" label="状态" width="120" align="center">
             <template #default="scope">
-              <span :class="{ 'highlight-row': scope.row.isPublish === 0, 'highlight-rows': scope.row.isPublish === 1 }">
-                {{ scope.row.isPublish === 0 ? '下线' : '上线' }}
+              <span :class="{ 'highlight-row': scope.row.isPublish === 0, 'highlight-rows': scope.row.isPublish === true }">
+                {{ scope.row.isPublish === false ? '下架状态' : '上线状态' }}
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="id" label="ID" width="120" align="center"/>
-          <el-table-column prop="name" label="名称" width="120" align="center"/>
+          <el-table-column prop="partId" label="零件编号" width="120" align="center"/>
+          <el-table-column prop="partName" label="零件名称" width="120" align="center"/>
           <el-table-column prop="color" label="颜色" width="150" align="center">
             <template #default="scope">
-              <span>{{ colors[scope.row.color].label }}</span>
+              <span>{{ colors[scope.row.color-1] }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="weight" label="重量(KG)" width="150" align="center"/>
@@ -431,7 +468,7 @@ onMounted(() => {
                 @click="goOff(scope.$index)"
                 round
               >
-                下线
+                下架
               </el-button>
             </template>
           </el-table-column>
@@ -469,7 +506,7 @@ onMounted(() => {
       label-width="auto"
     >
       <!-- ID -->
-      <el-form-item label="ID" prop="id" >
+      <el-form-item label="零件编号" prop="id" >
         <el-input v-model="dialogData.id" disabled/>
       </el-form-item>
       <!-- 名称 -->
@@ -485,10 +522,10 @@ onMounted(() => {
                 class="search-input"
               >
                 <el-option
-                  v-for="item in colors"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="(item, index) in colors"
+                  :key="index+1"
+                  :label="item"
+                  :value="index+1"
                 />
               </el-select>
       </el-form-item>

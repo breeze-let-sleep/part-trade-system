@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--上面就是xml文件的头信息，也叫约束，是固定的-->
+<mapper namespace="com.hyltest.mapper.VOrderCompleteInfoMapper">
+    <select id="getTotalNumToMerchant" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(*) from contract
+        where order_id in (select order_id from v_order_complete_info where merchant_id = #{curId})
+          and merchant_signature is null
+    </select>
+
+    <select id="getContractsByPageToMerchant" resultType="com.hyltest.pojo.VO.ContractVO">
+        select voci.order_id,part_name,amount,total_price,voci.create_time
+        from v_order_complete_info voci
+                 inner join contract c on voci.order_id = c.order_id
+        where merchant_id = #{curId} and merchant_signature is null
+        limit #{start},#{pageSize}
+    </select>
+
+    <select id="getTotalNumToCustomer" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(*) from contract
+        where order_id in (select order_id from v_order_complete_info where customer_id = #{curId})
+          and customer_signature is null
+    </select>
+
+    <select id="getContractsByPageToCustomer" resultType="com.hyltest.pojo.VO.ContractVO">
+        select voci.order_id,part_name,amount,total_price,voci.create_time
+        from v_order_complete_info voci
+                 inner join contract c on voci.order_id = c.order_id
+        where customer_id = #{curId} and customer_signature is null
+        limit #{start},#{pageSize}
+    </select>
+</mapper>

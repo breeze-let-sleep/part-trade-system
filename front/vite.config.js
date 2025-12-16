@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
+      // 配置@为/src目录
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },

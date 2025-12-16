@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyltest.mapper.OrderDetailMapper">
+    <select id="getProcessingTotalNumToMerchant" resultType="java.lang.Integer">
+        select
+            count(*)
+        from order_detail
+        where
+            order_id in (select id from `order` where merchant_id=#{curId})
+          and
+            is_take = 0
+    </select>
+    <select id="getProcessingTotalNumToCustomer" resultType="java.lang.Integer">
+        select
+            count(*)
+        from order_detail
+        where
+            order_id in (select id from `order` where customer_id=#{curId})
+          and
+            is_take = 0
+    </select>
+    <select id="getEndTotalNumToMerchant" resultType="java.lang.Integer">
+        select
+            count(*)
+        from order_detail
+        where
+            order_id in (select id from `order` where merchant_id=#{curId})
+          and
+            is_take = 1
+    </select>
+    <select id="getEndOrderDetailByMerchantId" resultType="com.hyltest.pojo.entity.OrderDetail">
+        select
+            id,order_id,update_time,star,evaluate
+        from order_detail
+        where
+            order_id in (select id from `order` where merchant_id=#{curId})
+          and
+            is_take = 1
+        limit #{start},#{pageSize}
+    </select>
+    <select id="getEndTotalNumToCustomer" resultType="java.lang.Integer">
+        select
+            count(*)
+        from order_detail
+        where
+            order_id in (select id from `order` where customer_id=#{curId})
+          and
+            is_take = 1
+    </select>
+    <select id="getEndOrderDetailByCustomerId" resultType="com.hyltest.pojo.entity.OrderDetail">
+        select
+            id,order_id,update_time,star,evaluate
+        from order_detail
+        where
+            order_id in (select id from `order` where customer_id=#{curId})
+          and
+            is_take = 1
+        limit #{start},#{pageSize}
+    </select>
+</mapper>

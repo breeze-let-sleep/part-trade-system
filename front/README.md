@@ -15,7 +15,6 @@ ElementPlus - 基于Vue 3的组件库
 @element-plus/icons-vue - ElementPlus图标库
 工具库
 Axios - HTTP请求库
-ECharts - 数据可视化图表库
-Vue-ECharts - ECharts的Vue封装
+Chart.js - 数据可视化图表库
 构建工具
 Vite - 现代化的前端构建工具

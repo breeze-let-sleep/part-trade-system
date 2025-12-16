@@ -1,59 +1,159 @@
 <script setup>
-import { onMounted, ref, nextTick } from 'vue'
+import { onMounted, ref, nextTick, onUnmounted } from 'vue'
 
-//会话id
 const conversationId = ref('')
-//基础路径
 const baseURL = 'http://localhost:8080'
-// 聊天数据
 const list = ref([
-  { role: 'assistant', content: '您好，我是小零，很高兴遇见你，有什么我可以帮到你吗？' },
+  { role: 'assistant', content: '您好，24h不间断客服-小零✌️为您提供服务😘' },
 ])
-// 输入框
 const msg = ref('')
+const isLoading = ref(false)
+let abortController = null // 使用全局变量管理 AbortController
+
+// 创建新的流式连接
+const createStreamConnection = (url) => {
+  const token = localStorage.getItem('jwt')
+  console.log(`jwt: ${token}`)
+  // 先取消已存在的请求
+  if (abortController) {
+    abortController.abort()
+  }
+  
+  abortController = new AbortController()
+  
+  const fetchData = async () => {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'text/html;charset=utf-8',
+          'Cache-Control': 'no-cache',
+          'token': token,
+        },
+        signal: abortController.signal
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      // 获取响应体作为 ReadableStream
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let assistantText = ''
+      const assistantIndex = list.value.length - 1
+
+      while (true) {
+        const { done, value } = await reader.read()
+        
+        if (done) {
+          console.log('Stream complete')
+          break
+        }
+
+        // 解码接收到的数据
+        const chunk = decoder.decode(value, { stream: true })
+        buffer += chunk
+        
+        // 直接处理整个块的内容
+        if (chunk) {
+          assistantText += chunk
+          
+          // 更新助手消息内容（直接替换最后一项）
+          list.value[list.value.length - 1] = {
+            role: 'assistant',
+            content: assistantText,
+            isHtml: true // 标记内容包含HTML
+          }
+          
+          // 触发响应式更新
+          list.value = [...list.value]
+          
+          // 滚动到底部
+          nextTick(() => {
+            const box = document.querySelector('.chat-box')
+            if (box) {
+              box.scrollTop = box.scrollHeight
+            }
+          })
+        }
+      }
+      
+      // 完成后设置加载状态为false
+      isLoading.value = false
+      
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Request was aborted')
+      } else {
+        console.error('Fetch error:', error)
+        // 添加错误提示到列表中
+        list.value[list.value.length - 1] = {
+          role: 'assistant', 
+          content: '抱歉，连接出现问题，请稍后重试😔',
+          isHtml: false
+        }
+        list.value = [...list.value] // 触发响应式更新
+      }
+      isLoading.value = false
+    }
+  }
+
+  fetchData()
+}
 
 // 发送消息
 const send = async () => {
-  try{
-    //将用户消息展示在聊天区域内
-    const val = msg.value.trim()
-    if (!val) return
-    list.value.push({ role: 'user', content: val })
+  const val = msg.value.trim()
+  if (!val || isLoading.value) return
+
+  try {
+    // 添加用户消息
+    list.value.push({ role: 'user', content: val, isHtml: false })
     msg.value = ''
-    //这段代码的功能是：使用`nextTick`确保DOM更新完成后，获取`.chat-box`元素并将其滚动到底部，实现聊天窗口自动定位到最新消息的位置。
-    nextTick(() => {
-      const box = document.querySelector('.chat-box')
-      box.scrollTop = box.scrollHeight
+    
+    // 添加空的助手消息（占位）
+    list.value.push({ role: 'assistant', content: '', isHtml: true })
+    
+    // 触发响应式更新
+    list.value = [...list.value]
+    
+    nextTick(scrollToBottom)
+
+    // 设置加载状态
+    isLoading.value = true
+    
+    // 创建新连接
+    const url = `${baseURL}/chat?prompt=${encodeURIComponent(val)}&chatId=${conversationId.value}`
+    createStreamConnection(url)
+    
+  } catch (error) {
+    console.error('发送失败:', error)
+    list.value.push({
+      role: 'assistant',
+      content: '发送失败，请检查网络连接😔',
+      isHtml: false
     })
-  /* ---------- 关键：SSE 接收流 ---------- */
-  // 拼 url（encode 中文）
-  const url = `${baseURL}/chat?prompt=${val}&conversationId=${conversationId.value}`
-  //实际发送异步请求到后端
-  const evtSource = new EventSource(url)
-
-  let assistantText = ''            // 累加器
-  list.value.push({ role: 'assistant', content: '' }) //插入一个空的助手消息占位符
-
-  //每收到一段数据就追加到 assistantText 中，并更新聊天列表中最后一条(助手)消息的内容。
-  evtSource.onmessage = e => {
-    assistantText += e.data         // 逐段拼
-    // 更新最后一条 assistant 消息
-    list.value[list.value.length - 1].content = assistantText
-    nextTick(() => {
-      document.querySelector('.chat-box').scrollTop = 99999
-    })
-  }
-  evtSource.onerror = () => evtSource.close() // 结束自动关
-
-  }catch(error){
-    console.error(error)
+    // 触发响应式更新
+    list.value = [...list.value]
+    isLoading.value = false
   }
 }
 
+const scrollToBottom = () => {
+  const box = document.querySelector('.chat-box')
+  if (box) box.scrollTop = box.scrollHeight
+}
 
 onMounted(() => {
-  //刚进入页面时产生一个会话id
-  conversationId.value=Math.floor(100000 + Math.random() * 900000).toString()
+  conversationId.value = Math.floor(100000 + Math.random() * 900000).toString()
+})
+
+onUnmounted(() => {
+  if (abortController) {
+    abortController.abort()
+  }
 })
 </script>
 
@@ -70,20 +170,41 @@ onMounted(() => {
       </el-header>
       <el-main class="main">
         <!-- 聊天内容区 -->
-        <div class="chat-box">
+        <div class="chat-box" ref="chatBox">
           <div
             v-for="(item, idx) in list"
             :key="idx"
             :class="['bubble', item.role === 'user' ? 'right' : 'left']"
           >
-            <span class="text">{{ item.content }}</span>
+            <span 
+              v-if="!item.isHtml" 
+              class="text"
+            >
+              {{ item.content }}
+            </span>
+            <div 
+              v-else 
+              class="text html-content"
+              v-html="item.content"
+            ></div>
+          </div>
+          <!-- 加载指示器 -->
+          <div v-if="isLoading" class="bubble left">
+            <span class="text loading">正在输入中<span class="dots">...</span></span>
           </div>
         </div>
 
         <!-- 底部输入区 -->
         <div class="footer">
-          <textarea v-model="msg" placeholder="请输入内容" rows="1"></textarea>
-          <button @click="send">发送</button>
+          <textarea 
+            v-model="msg" 
+            placeholder="请输入内容" 
+            rows="1"
+            @keydown.enter.prevent="send"
+          ></textarea>
+          <button @click="send" :disabled="isLoading">
+            {{ isLoading ? '发送中...' : '发送' }}
+          </button>
         </div>
       </el-main>
     </el-container>
@@ -189,6 +310,34 @@ onMounted(() => {
   position: relative;
 }
 
+.html-content {
+  /* 为HTML内容设置样式 */
+  line-height: 1.5;
+}
+
+.html-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.html-content th, .html-content td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+
+.html-content th {
+  background-color: #cccccc;
+  font-weight: bold;
+  text-align: center;
+}
+
+.html-content tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
 .bubble.left .text {
   background: rgba(255, 255, 255, 0.9);
   border-bottom-left-radius: 5px;
@@ -198,5 +347,22 @@ onMounted(() => {
   background: linear-gradient(135deg, #4063ff 0%, #9328ff 100%);
   color: white;
   border-bottom-right-radius: 5px;
+}
+
+.loading .dots {
+  display: inline-block;
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* 禁用按钮样式 */
+.footer button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 </style>

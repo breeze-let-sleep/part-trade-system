@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 /**
  * <p>
  * 供应商管理零件详情视图
+ * 只有当MerchantPart里有该零件时，该零件才会显示
  * </p>
  *
  * @author Huang
@@ -23,7 +24,7 @@ public class VMerchantPartDetail implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id，以1开头，共6位
+     * 供应商id，以1开头，共6位
      */
     private Integer merchantId;
 
@@ -33,12 +34,12 @@ public class VMerchantPartDetail implements Serializable {
     private String merchantName;
 
     /**
-     * id
+     * 零件id
      */
     private Integer partId;
 
     /**
-     * 名称
+     * 零件名称
      */
     private String partName;
 
@@ -86,6 +87,12 @@ public class VMerchantPartDetail implements Serializable {
      * 是否发布上线（0:否;1:是）
      */
     private Boolean isPublish;
+
+
+    /**
+     * 将要购买数量（用于商品获取）
+     */
+    private Integer amount;
 
 
 }

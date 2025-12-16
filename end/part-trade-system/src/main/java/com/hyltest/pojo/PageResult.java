@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PageResult {
     //总记录数
-    private Long total;
+    private Integer total;
     //结果集
     private List rows;
 }

@@ -13,16 +13,16 @@
         <el-input v-model="form.phone" />
       </el-form-item> -->
       <el-form-item label="密码">
-        <el-input v-model="form.password1" type="password" />
+        <el-input v-model="form.password" type="password" />
       </el-form-item>
       <el-form-item label="确认密码">
-        <el-input v-model="form.password2" type="password" />
+        <el-input v-model="form.password1" type="password" />
       </el-form-item>
       <!-- 角色单选按钮 -->
       <el-form-item label="角色">
         <el-radio-group v-model="form.role" class="role-radio-group">
-          <el-radio value="merchant" class="role-radio" border>商家</el-radio>
-          <el-radio value="customer" class="role-radio" border>顾客</el-radio>
+          <el-radio value="1" class="role-radio" border>供应商</el-radio>
+          <el-radio value="2" class="role-radio" border>顾客</el-radio>
         </el-radio-group>
       </el-form-item>
       <!-- 表单按钮 -->
@@ -38,6 +38,8 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
+import { ElNotification } from 'element-plus'
+import {getRegister} from '@/api/login'
 
 // 路由：用于快速跳转
 const router = useRouter()
@@ -45,15 +47,55 @@ const router = useRouter()
 const form = reactive({
   name: '',
   // phone: '',
+  password: '',
   password1: '',
-  password2: '',
   role: '',
 })
 
-const onSubmit = () => {
+const register = reactive({
+  name: '',
+  password: '',
+  role: '',
+})
+
+const onSubmit = async () => {
   /* 向后端发送请求，根据返回的信息进行跳转
   （成功：回到登录页面；失败：提示错误信息）*/
-  
+  if (form.name === ''){
+    ElNotification({
+      title: '名字不能为空',
+      message: '请正确输入您的名字进行注册',
+      type: 'info',
+    })
+    return;
+  }
+  if (form.password !== form.password1) {
+    ElNotification({
+      title: '密码错误',
+      message: '您两次输入的密码不一致，请检查您的密码',
+      type: 'info',
+    })
+    return;
+  }else{
+    register.name = form.name
+    register.password = form.password
+    register.role = form.role
+    const res = await getRegister(register)
+    if (res.code === 1) {
+      ElNotification({
+        title: '注册成功',
+        message: '您已经成功注册，请登录',
+        type: 'success',
+      })
+      goToLogin()
+    }else{
+      ElNotification({
+        title: '注册失败，请重试',
+        type: 'error',
+      })
+      return;
+    }
+  }
 }
 
 const goToLogin = () => {

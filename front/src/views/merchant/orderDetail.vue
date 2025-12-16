@@ -1,62 +1,50 @@
 <script setup>
-import {ref,reactive,onMounted} from 'vue'
+import {ref,reactive,onMounted,watch} from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { getProcessingList,getEndList,deliverOrder } from '@/api/orderDetail'
 
 //-----------------分页相关-------------------
 // 分页数据
 const page = reactive({
-  //todo：在钩子函数中进行获取数据
-  total: 100,
+  total: '',
   pageSize: 7,
   currentPage: 1
 })
 
 // 页码改变
-const handleCurrentChange = (val) => {
+const handleCurrentChange =async (val) => {
   console.log(`当前页: ${val}`)
-  // TODO: 调用后端API获取对应页的数据
+  if(status.value==='processing'){
+    const res = await getProcessingList(page.currentPage, page.pageSize)
+    page.total = res.data.total
+    processTableData.value = res.data.rows
+  }else{
+    const res = await getEndList(page.currentPage, page.pageSize)
+    page.total = res.data.total
+    endTableData.value = res.data.rows
+  }
 }
 
 //-----------------头部相关-------------------
 //选择按钮
 const status = ref('processing') 
-
+// 对status的状态进行监听
+watch(status, async (newStatus) => {
+  if (newStatus === 'processing') {
+    const res = await getProcessingList(page.currentPage, page.pageSize)
+    page.total = res.data.total
+    processTableData.value = res.data.rows
+  } else if (newStatus === 'end') {
+    const res = await getEndList(page.currentPage, page.pageSize)
+    page.total = res.data.total
+    endTableData.value = res.data.rows
+  }
+})
 
 //------------------表格相关--------------------
 //表格数据
-const processTableData = [
-  //todo：在钩子函数中进行获取数据
-  {
-    isDeliver: 1,
-    id: '001',
-    orderId: '12009',
-    customerName: 'Tom',
-    customerAddress: '顾客地址',
-  },{
-    isDeliver: 0,
-    id: '001',
-    orderId: '12009',
-    customerName: 'Tom',
-    customerAddress: '顾客地址',
-  }
-]
-const endTableData = [
-  //todo：在钩子函数中进行获取数据
-  {
-    id: '001',
-    orderId: '12009',
-    updateTime: '2022-01-01 12:00:00',
-    star: 5,
-    evaluate: '这个零件很棒', 
-  },
-  {
-    id: '001',
-    orderId: '12009',
-    updateTime: '2022-01-01 12:00:00',
-    star: 1,
-    evaluate: '这个零件很low', 
-  },
-]
+const processTableData = ref()
+const endTableData = ref()
 
 //发货
 const deliver=(index) => { 
@@ -66,8 +54,11 @@ const deliver=(index) => {
     cancelButtonText: '取消',
     type: 'success',
   })
-    .then(() => {
-      // todo: 请求后端将该订单设置为发货状态
+    .then(async() => {
+      await deliverOrder(processTableData.value[index].orderId)
+      const res = await getProcessingList(page.currentPage,page.pageSize)
+      page.total = res.data.total
+      processTableData.value = res.data.rows
       ElMessage({
         type: 'success',
         message: `已经成功发货`,
@@ -82,8 +73,10 @@ const deliver=(index) => {
 }
 
 //-----------------生命周期钩子函数----------------------
-onMounted(() => { 
-  //todo: ......
+onMounted(async() => { 
+  const res = await getProcessingList(page.currentPage,page.pageSize)
+  page.total = res.data.total
+  processTableData.value = res.data.rows
 })
 </script>
 
@@ -123,10 +116,11 @@ onMounted(() => {
               <el-tag v-else type="info">未发货</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="id" label="ID" width="120" align="center"/>
-          <el-table-column prop="orderId" label="订单ID" width="120" align="center"/>
+          <el-table-column prop="orderId" label="订单编号" width="120" align="center"/>
           <el-table-column prop="customerName" label="顾客姓名" width="180" align="center"/>
           <el-table-column prop="customerAddress" label="顾客地址" width="200" align="center"/>
+          <el-table-column prop="totalPrice" label="订单实付金额（元）" width="160" align="center"/>
+          <el-table-column prop="updateTime" label="修改时间" width="200" align="center"/>
           <el-table-column fixed="right" label="操作" min-width="120" align="center">
             <template #default="scope">
               <!-- 
@@ -148,8 +142,8 @@ onMounted(() => {
         </el-table>
         <!-- 已结束表格 -->
         <el-table :data="endTableData" style="height: 90%" v-if="status === 'end'">
-          <el-table-column prop="id" label="ID" width="120" align="center"/>
-          <el-table-column prop="orderId" label="订单ID" width="120" align="center"/>
+          <el-table-column prop="id" label="序号" width="120" align="center"/>
+          <el-table-column prop="orderId" label="订单编号" width="120" align="center"/>
           <el-table-column prop="updateTime" label="收货时间" width="160" align="center"/>
           <el-table-column prop="star" label="星级评价" width="200" align="center">
             <template #default="scope">

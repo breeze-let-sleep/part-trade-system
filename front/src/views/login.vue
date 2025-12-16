@@ -18,9 +18,9 @@
       <!-- 角色单选按钮 -->
       <el-form-item label="角色">
         <el-radio-group v-model="form.role" class="role-radio-group">
-          <el-radio value="admin" class="role-radio" border>管理员</el-radio>
-          <el-radio value="merchant" class="role-radio" border>商家</el-radio>
-          <el-radio value="customer" class="role-radio" border>顾客</el-radio>
+          <el-radio value="0" class="role-radio" border>管理员</el-radio>
+          <el-radio value="1" class="role-radio" border>供应商</el-radio>
+          <el-radio value="2" class="role-radio" border>顾客</el-radio>
         </el-radio-group>
       </el-form-item>
       <!-- 表单按钮 -->
@@ -35,9 +35,10 @@
 
 <script setup>
 import { ref,reactive } from 'vue'
+import { ElNotification } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store/user'
-
+import { getLogin } from '@/api/login'
 // 当前用户信息
 const userStore = useUserStore()
 // 路由：用于快速跳转
@@ -68,16 +69,35 @@ const reset = () => {
 // 登录
 const doLogin = async () => {
   //todo: 进行登录操作，成功则下发jwt令牌
-  //jwt1:admin;jwt2:merchant;jwt3:customer;jwt4:root
-  const jwt1="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoi5bCP5piOIiwiaWQiOjEsImV4cCI6MTc2MDc3NDM2MH0.ctDQg9Inl0wtToWGG2LH_TDhPQPfUGDIEHfFxPrchgs"
-  const jwt2="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoxLCJuYW1lIjoi5ZOH5ZOI5ZOIIiwiaWQiOjEsImV4cCI6MTc1OTkyNjY4NX0.EW-gkWrqtl4LclYZugy_QkfhQlgKO4Y5oHDKZLxm-2c"
-  const jwt3="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoyLCJuYW1lIjoi5bCP5piOIiwiaWQiOjEsImV4cCI6MTc1OTkyNjc5NH0.kG4lGKEigaKkBmlNWYp0WRBTkvXh4By7fP8o3YIbTyM"
-  const jwt4="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoicm9vdCIsImlkIjoxLCJleHAiOjE3NjA3NzQ1MzJ9.JzwHtRciNwQpbcvIdvBRCCbqp6tIEzA8wR82ncq0L_o"
-  // 先存储jwt
-  localStorage.setItem('jwt', jwt4)    
-  // 安装对应角色路由，设置登录的用户的基本信息
-  await userStore.setUserInfo(jwt4)              
-  router.replace('/home')
+  const res = await getLogin(form)
+  if (res.code === 1) {
+    /* //jwt1:admin;jwt2:merchant;jwt3:customer;jwt4:root
+    const jwt1="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoi5bCP5piOIiwiaWQiOjEsImV4cCI6MTc2MDc3NDM2MH0.ctDQg9Inl0wtToWGG2LH_TDhPQPfUGDIEHfFxPrchgs"
+    const jwt2="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoxLCJuYW1lIjoi5ZOH5ZOI5ZOIIiwiaWQiOjEsImV4cCI6MTc1OTkyNjY4NX0.EW-gkWrqtl4LclYZugy_QkfhQlgKO4Y5oHDKZLxm-2c"
+    const jwt3="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoyLCJuYW1lIjoi5bCP5piOIiwiaWQiOjEsImV4cCI6MTc1OTkyNjc5NH0.kG4lGKEigaKkBmlNWYp0WRBTkvXh4By7fP8o3YIbTyM"
+    const jwt4="eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjowLCJuYW1lIjoicm9vdCIsImlkIjoxLCJleHAiOjE3NjA3NzQ1MzJ9.JzwHtRciNwQpbcvIdvBRCCbqp6tIEzA8wR82ncq0L_o"
+    // 先存储jwt
+    localStorage.setItem('jwt', jwt4)    
+    // 安装对应角色路由，设置登录的用户的基本信息
+    await userStore.setUserInfo(jwt4)               */
+    const jwt=res.data
+    // 先存储jwt
+    localStorage.setItem('jwt', jwt)
+    // 安装对应角色路由，设置登录的用户的基本信息
+    await userStore.setUserInfo(jwt)
+    router.replace('/home')
+    ElNotification({
+      title: '登录成功',
+      message: '欢迎您进入零件交易系统',
+      type: 'success',
+    })
+  }else {
+    ElNotification({
+      title: '登录失败',
+      message: res.msg,
+      type: 'error',
+    })
+  }
 }
 </script>
 

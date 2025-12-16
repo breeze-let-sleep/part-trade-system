@@ -28,6 +28,11 @@ public class Part implements Serializable {
     private Integer id;
 
     /**
+     * 供应商id
+     */
+    private Integer merchantId;
+
+    /**
      * 名称
      */
     private String name;
@@ -55,7 +60,7 @@ public class Part implements Serializable {
     /**
      * 单价，单位元
      */
-    private Long singlePrice;
+    private Integer singlePrice;
 
     /**
      * 创建时间(YYYY-MM-DD HH:MM:SS)

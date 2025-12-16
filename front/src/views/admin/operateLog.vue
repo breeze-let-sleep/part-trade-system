@@ -1,36 +1,33 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive,onMounted } from 'vue'
+import { getLogs } from '@/api/logs'
+
 
 //-----------------分页相关-------------------
 // 分页数据
 const page = reactive({
-  //todo：在钩子函数中进行获取数据
-  total: 100,
+  total: '',
   pageSize: 7,
   currentPage: 1
 })
 
 // 页码改变
-const handleCurrentChange = (val) => {
+const handleCurrentChange = async(val) => {
   console.log(`当前页: ${val}`)
-  // TODO: 调用后端API获取对应页的数据
+  page.currentPage = val
+  const res =await getLogs(page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value = res.data.rows
 }
 //-----------------表格相关-------------------
 // 数据源
-const tableData = ref([
-  {
-    createTime: '2016-05-03',
-    adminId: '001',
-    adminName: 'Tom',
-    method: '删除的敏感操作',
-  },
-  {
-    createTime: '2016-05-03',
-    adminId: '001',
-    adminName: 'Tom',
-    method: '普通操作',
-  },
-])
+const tableData = ref()
+
+onMounted(async() => { 
+  const res =await getLogs(page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value = res.data.rows
+})
 </script>
 
 <template>
@@ -53,11 +50,12 @@ const tableData = ref([
           style="padding: 20px;width: 100%;height: 90%;"
         >
           <el-table-column prop="createTime" label="操作日期" width="180" />
+          <el-table-column prop="id" label="序号" width="120" />
           <el-table-column prop="adminId" label="操作人ID" width="120" />
-          <el-table-column prop="adminName" label="操作人姓名" width="120" />
-          <el-table-column prop="method" label="操作方法详情" width="485">
+          <el-table-column prop="name" label="操作人姓名" width="120" />
+          <el-table-column prop="method" label="操作方法详情" width="400">
             <template #default="scope">
-              <span :class="{ 'highlight-row': scope.row.method.includes('删除') }">
+              <span :class="{ 'highlight-row': scope.row.method.includes('delete') }">
                 {{ scope.row.method }}
               </span>
             </template>

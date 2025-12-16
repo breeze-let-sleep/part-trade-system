@@ -5,4 +5,29 @@
 <!--上面就是xml文件的头信息，也叫约束，是固定的-->
 <mapper namespace="com.hyltest.mapper.OrderMapper">
 
+    <select id="getSellPartFour" resultType="java.util.Map">
+        select
+            p.name part_name,num
+        from
+                (select part_id,sum(amount) num from `order` group by part_id) os
+                    left join part p on os.part_id=p.id
+        order by num desc limit 4
+    </select>
+
+    <select id="getRecentFourMonthOrder" resultType="java.util.Map">
+        SELECT
+            month,
+            order_num
+        FROM (
+                 -- 子查询：按月份分组统计所有月份的订单数，并按月份倒序排列
+                 SELECT
+                     DATE_FORMAT(create_time, '%Y-%m') AS month,  -- 将datetime转换为"YYYY-MM"格式的月份
+                     COUNT(id) AS order_num                       -- 统计每月订单数（id为主键，确保唯一）
+                 FROM `order`  -- 表名为关键字，需用反引号包裹
+                 GROUP BY month  -- 按月份分组
+                 ORDER BY month DESC  -- 按月份倒序（最新的月份在前）
+                     LIMIT 4  -- 取最近的4个月份
+             ) AS recent_4_months
+        ORDER BY month ASC
+    </select>
 </mapper>

@@ -1,58 +1,57 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive,onMounted,watch } from 'vue'
 import { ElNotification } from 'element-plus'
+import {getProcessingList,getEndList,takeOrder} from '@/api/orderDetail'
 
 
+onMounted(async() => {
+  const res = await getProcessingList(page.currentPage, page.pageSize)
+  page.total = res.data.total
+  processingTableData.value = res.data.rows
+})
 //-----------------分页相关-------------------
 // 分页数据
 const page = reactive({
-  //todo：在钩子函数中进行获取数据
-  total: 100,
+  total: '',
   pageSize: 7,
   currentPage: 1
 })
 
 // 页码改变
-const handleCurrentChange = (val) => {
+const handleCurrentChange =async (val) => {
   console.log(`当前页: ${val}`)
-  // TODO: 调用后端API获取对应页的数据
+  if(status.value==='processing'){
+    const res = await getProcessingList(page.currentPage, page.pageSize)
+    page.total = res.data.total
+    processingTableData.value = res.data.rows
+  }else{
+    const res = await getEndList(page.currentPage, page.pageSize)
+    page.total = res.data.total
+    endTableData.value = res.data.rows
+  }
 }
 
 //-----------------头部---------------------
 // 订单状态按钮
 const status = ref('processing')
+
+// 对status的状态进行监听
+watch(status, async (newStatus) => {
+  if (newStatus === 'processing') {
+    const res = await getProcessingList(page.currentPage, page.pageSize)
+    page.total = res.data.total
+    processingTableData.value = res.data.rows
+  } else if (newStatus === 'end') {
+    const res = await getEndList(page.currentPage, page.pageSize)
+    page.total = res.data.total
+    endTableData.value = res.data.rows
+  }
+})
+
 //-----------------表格相关-------------------
 // 数据源
-const processingTableData = ref([
-  {
-    updateDate: '2016-05-03 10:00:00',
-    id: '001',  //订单流程id主键
-    orderId: '12009',
-    isDeliver: 0, //用于物流展示（0：未发货；1：已发货-运输中）
-  },
-  {
-    updateDate: '2016-05-03 10:00:00',
-    id: '001',  //订单流程id主键
-    orderId: '12009',
-    isDeliver: 1, //用于物流展示
-  },
-])
-const endTableData = ref([
-  {
-    id: '001',
-    orderId: '12009',
-    updateTime: '2022-01-01 12:00:00',
-    star: 5,
-    evaluate: '这个零件很棒', 
-  },
-  {
-    id: '001',
-    orderId: '12009',
-    updateTime: '2022-01-01 12:00:00',
-    star: 1,
-    evaluate: '这个零件很low', 
-  },
-])
+const processingTableData = ref()
+const endTableData = ref()
 //当前行索引
 const currentIndex = ref(null)
 //点击确认收货按钮
@@ -66,25 +65,43 @@ const takeGoods=(index) => {
 const dialogVisible = ref(false)
 //评价对象
 const dialogData = ref({
-  id: '',
+  orderId: '',
   star: 0,
   evaluate: '',
 })
 //确认收货
-const confirmTakeGoods=() => { 
+const confirmTakeGoods=async() => { 
   //在对话框内评价星级和内容
-  dialogData.value.id = processingTableData.value[currentIndex.value].id
-  //todo：发送支付请求到后端确认收货
+  dialogData.value.orderId = processingTableData.value[currentIndex.value].orderId
+  console.log(dialogData.value)
+  const res = await takeOrder(dialogData.value)
+  if(res.code === 1){ 
+    ElNotification({
+      title: '操作成功',
+      message: '感谢您的评价，期待您的下次合作',
+      type: 'success',
+    })
+    const res = await getProcessingList(page.currentPage, page.pageSize)
+    page.total = res.data.total
+    processingTableData.value = res.data.rows
+  }else{ 
+    ElNotification({
+      title: '操作失败',
+      message: '请稍后再试',
+      type: 'error',
+    })
+  }
   dialogVisible.value = false
-  ElNotification({
-    title: '操作成功',
-    message: '感谢您的评价，期待您的下次合作',
-    type: 'success',
-  })
+  dialogData.value.orderId = ''
+  dialogData.value.star = 0
+  dialogData.value.evaluate = ''
 }
 //暂时取消
 const cancel=() => { 
   dialogVisible.value = false
+  dialogData.value.orderId = ''
+  dialogData.value.star = 0
+  dialogData.value.evaluate = ''
 }
 </script>
 
@@ -118,9 +135,6 @@ const cancel=() => {
           style="padding: 20px;width: 100%;height: 90%;"
           v-if="status === 'processing'"
         >
-          <el-table-column prop="updateDate" label="日期" width="180" />
-          <el-table-column prop="id" label="ID" width="120" />
-          <el-table-column prop="orderId" label="订单号" width="140" />
           <el-table-column prop="isDeliver" label="物流状态" width="360" >
             <template #default="scope">
               <el-steps :active="scope.row.isDeliver" finish-status="success" process-status="finish" align-center>
@@ -131,10 +145,21 @@ const cancel=() => {
               </el-steps>
             </template>
           </el-table-column>
+          <el-table-column prop="updateTime" label="日期" width="180" />
+          <el-table-column prop="orderId" label="订单编号" width="180" />
+          <el-table-column prop="partName" label="购买零件" width="180" />
+          <el-table-column prop="merchantName" label="发货商家" width="180" />
+          <el-table-column prop="merchantAddress" label="发货地" width="180" />
+          <el-table-column prop="totalPrice" label="支付金额" width="180" />
           <el-table-column fixed="right" label="操作" width="120">
             <template #default="scope">
               <!-- 将当前行索引作为参数传入 -->
-              <el-button type="primary" :round="true" @click="takeGoods(scope.$index)">确认收货</el-button>
+              <el-button 
+                type="primary" 
+                :round="true" 
+                @click="takeGoods(scope.$index)" 
+                :disabled="scope.row.isDeliver === 0"
+              >确认收货</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -144,8 +169,8 @@ const cancel=() => {
           style="padding: 20px;width: 100%;height: 90%;"
           v-if="status === 'end'"
         > 
-          <el-table-column prop="id" label="ID" width="120" align="center"/>
-          <el-table-column prop="orderId" label="订单ID" width="120" align="center"/>
+          <el-table-column prop="id" label="序号" width="120" align="center"/>
+          <el-table-column prop="orderId" label="订单编号" width="120" align="center"/>
           <el-table-column prop="updateTime" label="签收时间" width="160" align="center"/>
           <el-table-column prop="star" label="星级评价" width="200" align="center">
             <template #default="scope">

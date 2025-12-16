@@ -2,21 +2,24 @@
 import { ref, reactive, onMounted } from 'vue'
 //导入element-plus的提示
 import { ElCard, ElRow, ElCol, ElInput, ElButton, ElMessage, ElUpload, ElImage, ElMessageBox,ElNotification } from 'element-plus'
-//导入请求函数
-import {getAdminList} from '@/api/admin'
+import {getInfoById,updateInfo,deleteAdmin} from '@/api/admin'
+import { useUserStore } from '@/store/user'
 
+const token = ref('')
+const userStore = useUserStore()
 //个人信息对象
 const form = reactive({
-  id: '',
-  name: 'root',
+  id: userStore.id,
+  name: '',
   phone: '',
   password: '',
-  avatar: 'https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg'
+  avatar: ''
 })
 
 //--------------------头像上传----------------------
-const handleAvatarSuccess = (file) => {
-  //todo:上传成功，将头像地址保存到form.avatar中
+const handleAvatarSuccess = (response, file) => {
+  //response为后端响应的Result对象
+  form.avatar=response.data
 }
 
 //上传文件格式与大小检查
@@ -40,8 +43,8 @@ const alter = () => {
   hasAlter.value = true
 }
 //保存
-const save = () => { 
-  //todo: 请求后端进行数据的更新
+const save =async () => { 
+  const res=await updateInfo(form)
   hasAlter.value = false
   ElNotification({
     title: '保存成功',
@@ -61,12 +64,15 @@ const remove = () => {
     }
   )
   // then: 确定按钮点击事件
-    .then(() => {
-      //todo：发送请求到后端删除该用户并退出
-      ElMessage({
-        type: 'success',
-        message: '注销成功',
-      })
+    .then(async() => {
+      const res=await deleteAdmin(form.id)
+      if(res.code===1){ 
+        ElMessage({
+          type: 'success',
+          message: '注销成功',
+        })
+        userStore.logout()
+      }
     })
   // catch: 取消按钮点击事件
     .catch(() => {
@@ -80,8 +86,13 @@ const remove = () => {
 
 //----------------------生命周期钩子函数----------------------
 onMounted(async () => { 
-  //todo: 获取用户信息
-  
+  token.value = localStorage.getItem('jwt')
+  form.id = userStore.id
+  const res = await getInfoById(form.id)
+  form.name = res.data.name
+  form.phone = res.data.phone
+  form.address = res.data.address
+  form.avatar = res.data.avatar
 })
 </script>
 
@@ -98,7 +109,8 @@ onMounted(async () => {
           <el-col :span="24">
             <el-upload
               class="avatar-uploader"
-              action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+              action="/api/upload"
+              :headers="{'token':token}"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"

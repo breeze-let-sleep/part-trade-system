@@ -1,29 +1,37 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive,onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import {likeCollects,removeCollect,getCollects} from '@/api/collects'
+import { useUserStore } from '@/store/user'
 
+
+const userStore = useUserStore()
 //-----------------分页相关-------------------
 // 分页数据
 const page = reactive({
-  //todo：在钩子函数中进行获取数据
-  total: 100,
+  total: '',
   pageSize: 7,
   currentPage: 1
 })
 
 // 页码改变
-const handleCurrentChange = (val) => {
+const handleCurrentChange = async(val) => {
   console.log(`当前页: ${val}`)
-  // TODO: 调用后端API获取对应页的数据
+  page.currentPage = val
+  const res=await getCollects(page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value=res.data.rows
 }
 
 //-----------------搜索框相关-------------------
 //输入框数据
 const inputMerchant = ref('')
 // 搜索
-const search = () => {
-  //todo：根据输入的供应商名称进行模糊查找
+const search = async() => {
+  const res = await likeCollects(inputMerchant.value,userStore.id)
+  page.total = res.data.total
+  tableData.value=res.data.rows
 }
 //重置搜索
 const resetSearch = () => {
@@ -31,18 +39,7 @@ const resetSearch = () => {
 }
 //-----------------表格相关-------------------
 // 数据源
-const tableData = ref([
-  {
-    id: 'M0001', //顾客id（如果pinia可以直接获取到则不需要再获取）
-    avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-    merchantId: 'M0001',
-    merchantName: '张三', //供应商名称
-    merchantPhone: '12345678901', //供应商电话
-    merchantAddress: '上海', //供应商地址
-    merchantDescription: '这是供应商的简介', //供应商简介
-    createTime: '2021-01-01 00:00:00'
-  },
-])
+const tableData = ref()
 
 const deleteRow = (index) => {
   ElMessageBox.confirm(
@@ -54,12 +51,23 @@ const deleteRow = (index) => {
       type: 'warning',
     }
   )
-    .then(() => {
-      //todo：通过供应商id和顾客id来删除该条记录
-      ElMessage({
-        type: 'success',
-        message: '操作成功',
-      })
+    .then(async() => {
+      const res = await removeCollect(userStore.id,tableData.value[index].merchantId)
+      if (res.code === 1) {
+        ElMessage({
+          type: 'success',
+          message: '操作成功',
+        })
+        const res=await getCollects(page.currentPage,page.pageSize)
+        page.total = res.data.total
+        tableData.value=res.data.ro
+        ws
+      }else{
+        ElMessage({
+          type: 'error',
+          message: '操作失败，请重试',
+        })
+      }
     })
     .catch(() => {
       ElMessage({
@@ -68,6 +76,12 @@ const deleteRow = (index) => {
       })
     })
 }
+
+onMounted(async() => {
+  const res=await getCollects(page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value=res.data.rows
+})
 </script>
 
 <template>
@@ -75,7 +89,7 @@ const deleteRow = (index) => {
     <el-container>
       <el-header class="header">
         <el-row>
-          <el-col :span="24"><span class="page-title">订单流程管理</span></el-col>
+          <el-col :span="24"><span class="page-title">收藏的供应商</span></el-col>
         </el-row>
         <el-row :gutter="10">
           <el-col :span="12"></el-col>
@@ -111,11 +125,11 @@ const deleteRow = (index) => {
               />
             </template>
           </el-table-column>
-          <el-table-column prop="merchantId" label="供应商ID" width="120" align="center"/>
-          <el-table-column prop="merchantName" label="供应商姓名" width="120" align="center"/>
-          <el-table-column prop="merchantPhone" label="供应商电话" width="120" align="center"/>
-          <el-table-column prop="merchantAddress" label="供应商地址" width="150" align="center"/>
-          <el-table-column prop="merchantDescription" label="供应商简介" width="200" align="center"/>
+          <el-table-column prop="merchantId" label="供应商编号" width="120" align="center"/>
+          <el-table-column prop="name" label="供应商姓名" width="120" align="center"/>
+          <el-table-column prop="phone" label="供应商电话" width="120" align="center"/>
+          <el-table-column prop="address" label="供应商地址" width="150" align="center"/>
+          <el-table-column prop="description" label="供应商简介" width="400" align="center"/>
           <el-table-column prop="createTime" label="创建时间" width="180" align="center"/>
           <el-table-column fixed="right" label="操作" min-width="100" align="center">
             <template #default="scope">

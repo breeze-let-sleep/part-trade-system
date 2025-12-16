@@ -45,12 +45,12 @@ public class Order implements Serializable {
     /**
      * 交易数量，单位：个
      */
-    private Long amount;
+    private Integer amount;
 
     /**
      * 交易金额，单位：元
      */
-    private Long totalPrice;
+    private Integer totalPrice;
 
     /**
      * 是否成功（0：不成功；1：已签名，成功）

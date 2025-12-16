@@ -12,4 +12,8 @@ package com.hyltest.service;
  */
 public interface IContractService{
 
+    /**
+     * 签名订单
+     */
+    String signature(Integer orderId, String value);
 }

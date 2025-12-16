@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--上面就是xml文件的头信息，也叫约束，是固定的-->
+<mapper namespace="com.hyltest.mapper.VMerchantCollectInfoMapper">
+    <select id="likeCollects" resultType="com.hyltest.pojo.entity.VMerchantCollectInfo">
+        select merchant_id, name, phone, address, avatar, description, customer_id, create_time
+        from v_merchant_collect_info
+        <where>
+            customer_id = #{customerId}
+        <if test="inputMerchant != null and inputMerchant != ''">
+            and name like concat('%',#{inputMerchant},'%')
+        </if>
+        </where>
+        limit #{start},#{pageSize}
+    </select>
+</mapper>

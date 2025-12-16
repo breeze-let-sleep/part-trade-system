@@ -1,21 +1,26 @@
 <script setup>
 import {ref,reactive,onMounted,nextTick} from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox,ElNotification } from 'element-plus'
+import {updateInfo,deleteCustomer,getPageList,addCustomer,LikeSearch} from '@/api/customer'
 
+
+const token = ref('')
 //-----------------分页相关-------------------
 // 分页数据
 const page = reactive({
-  //todo：在钩子函数中进行获取数据
-  total: 100,
+  total: '',
   pageSize: 7,
   currentPage: 1
 })
 
 // 页码改变
-const handleCurrentChange = (val) => {
+const handleCurrentChange = async(val) => {
   console.log(`当前页: ${val}`)
-  // TODO: 调用后端API获取对应页的数据
+  page.currentPage = val
+  const res=await getPageList(page.currentPage,page.pageSize)
+  page.total = res.data.total
+  tableData.value=res.data.rows
 }
 
 //-----------------搜索框相关-------------------
@@ -23,7 +28,7 @@ const handleCurrentChange = (val) => {
 const likeName = ref('')
 const likeAddress = ref('')
 // 时间选择器数据
-const overTime = ref('')
+const overTime = ref()
 //格式化时间数据
 const startTime = ref('')
 const endTime = ref('')
@@ -33,16 +38,27 @@ const endTime = ref('')
 */
 // 格式化时间
 const toFormatTime = (str) => { 
-  const d = new Date(str)                      // 先转 Date
-  const pad = n => n.toString().padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}
-   ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+  if (!str) return null; // 处理空值
+  
+  const d = new Date(str);
+  if (isNaN(d.getTime())) return null; // 处理无效日期
+  
+  const pad = n => n.toString().padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 // 搜索
-const search = () => { 
-  startTime.value = toFormatTime(overTime.value[0])
-  endTime.value = toFormatTime(overTime.value[1])
-  //todo：发送参数到后端获取数据
+const search =async () => { 
+  if (overTime.value === null || overTime.value === undefined) {
+    startTime.value = null
+    endTime.value = null
+  }else{
+    startTime.value = toFormatTime(overTime.value[0])
+    endTime.value = toFormatTime(overTime.value[1])
+  }
+  //-----------------有值传值，无值不传（Axios 的params参数会自动忽略undefined）
+  const res=await LikeSearch(likeName.value,likeAddress.value,startTime.value,endTime.value)
+  page.total = res.data.total
+  tableData.value=res.data.rows
 }
 //重置搜索框
 const resetSearch = () => { 
@@ -55,30 +71,19 @@ const resetSearch = () => {
 
 //------------------表格相关--------------------
 //表格数据
-const tableData = [
-  //todo：在钩子函数中进行获取数据
-  {
-    id: '001',
-    name: 'Tom',
-    phone: '12312312321',
-    address: 'California',
-    avatar:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-    createTime: '2025-10-10 09:00:00',
-    updateTime: '2025-10-10 09:00:00',
-  }
-]
+const tableData = ref([])
 
 //编辑行数据
 const editRow=(index) => { 
   //index为当前行索引
   dialogTitle.value = '编辑信息'
   dialogButtonText.value = '保存'
-  dialogData.id = tableData[index].id
-  dialogData.name = tableData[index].name
-  dialogData.phone = tableData[index].phone
-  dialogData.password = tableData[index].password
-  dialogData.address = tableData[index].address
-  dialogData.avatar = tableData[index].avatar
+  dialogData.id = tableData.value[index].id
+  dialogData.name = tableData.value[index].name
+  dialogData.phone = tableData.value[index].phone
+  dialogData.password = tableData.value[index].password
+  dialogData.address = tableData.value[index].address
+  dialogData.avatar = tableData.value[index].avatar
   dialogVisible.value = true
 }
 
@@ -95,12 +100,20 @@ const deleteRow = (index) => {
     }
   )
   // then: 确定按钮点击事件
-    .then(() => {
-      //todo：发送请求到后端删除该用户
-      ElMessage({
-        type: 'success',
-        message: '删除成功',
-      })
+    .then(async() => {
+      const res = await deleteCustomer(tableData.value[index].id)
+      handleCurrentChange(page.currentPage)
+      if (res.code === 1) {
+        ElMessage({
+          type: 'success',
+          message: '删除成功',
+        })
+      }else {
+        ElMessage({
+          type: 'error',
+          message: '删除失败，请重试',
+        })
+      }
     })
   // catch: 取消按钮点击事件
     .catch(() => {
@@ -115,7 +128,7 @@ const deleteRow = (index) => {
 
 //-----------------对话框相关-------------------
 //对话框显示标志
-const dialogVisible = ref(false)
+let dialogVisible = ref(false)
 //对话框标题
 const dialogTitle = ref('') //根据点击按钮进行设置
 //对话框按钮显示文字
@@ -152,12 +165,28 @@ const openAddDialog = () => {
   dialogVisible.value = true
 }
 //对话框按钮点击事件：根据按钮文本内容执行保存或修改
-const dialogButton = () => { 
+const dialogButton =async () => { 
+  let res = null
   if (dialogButtonText.value === '添加') {
-    //todo：发送请求到后端添加该用户
+    res=await addCustomer(dialogData)
   }
   if (dialogButtonText.value === '保存') {
-    //todo：发送请求到后端修改该用户信息
+    res=await updateInfo(dialogData)
+  }
+  if (res.code === 1) {
+    ElNotification({
+      title: '操作成功',
+      message: '数据已经正确更新',
+      type: 'success',
+    })
+    dialogVisible.value = false
+    handleCurrentChange(page.currentPage)
+  }else {
+    ElNotification({
+      title: '操作失败',
+      message: '数据更新失败，请重试',
+      type: 'error',
+    })
   }
 }
 // 重置对话框
@@ -175,10 +204,8 @@ const resetDialog = () => {
   })
 }
 //---------------------对话框图像
-const handleAvatarSuccess=(file) => { 
-  //todo：上传图片到后端进行远程保存并返回图片URL
-  const url=''
-  dialogData.avatar = url
+const handleAvatarSuccess=(response) => { 
+  dialogData.avatar = response.data
 }
 // 上传前判断文件格式和大小
 const beforeAvatarUpload=(file) => { 
@@ -195,8 +222,11 @@ const beforeAvatarUpload=(file) => {
 }
 
 //-----------------生命周期钩子函数----------------------
-onMounted(() => { 
-  //todo: ......
+onMounted(async() => { 
+  token.value = localStorage.getItem('jwt')
+  const res = await getPageList(page.currentPage, page.pageSize)
+  page.total = res.data.total
+  tableData.value = res.data.rows
 })
 </script>
 
@@ -334,7 +364,8 @@ onMounted(() => {
         <!-- 头像上传：action为上传接口地址；on-success为当片上传成功后的回调函数；before-upload为上传前的回调函数 -->
         <el-upload
           class="avatar-uploader"
-          action="http://localhost:8080/upload"
+          action="/api/upload"
+          :headers="{'token':token}"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"

@@ -2,7 +2,12 @@
 import {ref,reactive,onMounted} from 'vue'
 import { Search,Pointer } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox,ElNotification } from 'element-plus'
+import { useUserStore } from '@/store/user'
+import {likeSearch, getGoods} from '@/api/goods'
+import {addOrder} from '@/api/order'
+import {addCollect} from '@/api/collects'
 
+const userStore = useUserStore()
 //-----------------搜索框相关---------------------
 //供应商搜索
 const inputMerchant = ref('')
@@ -10,13 +15,18 @@ const inputMerchant = ref('')
 const inputPart = ref('')
 
 //搜索函数
-const search = () => {
-  //todo：发送查询请求到后端获取数据
+const search = async () => {
+  //------!--后端采用动态sql查询，当没有搜索条件时，返回所有数据
+  const res = await likeSearch(inputMerchant.value, inputPart.value)
+  console.log(res.data)
+  partData.value.list = res.data
 }
 //重置搜索框
 const resetSearch = () => {
   inputMerchant.value = ''
   inputPart.value = ''
+  //重新获得数据
+  loadMore()
 }
 
 
@@ -27,12 +37,13 @@ const colors = ref(['红色', '黄色', '绿色', '蓝色', '白色', '黑色'])
 const buyPart = ref({
   partId: 0,
   merchantId: 0,
-  customerId: 0,  //通过pinia获得
+  customerId: userStore.id,  //通过pinia获得
   amount: 0,
+  totalPrice: 0
 })
 //购买的函数
 const buy = (item) => { 
-  //item获得的是list中的一个对象（与零件相关）
+  //-----------item获得的是list中的一个对象（与零件相关）------------
   //对buyPart对象进行赋值
   ElMessageBox.confirm(
     '确定购买该零件商品吗？',
@@ -44,253 +55,36 @@ const buy = (item) => {
     }
   )
   // then: 确定按钮点击事件
-    .then(() => {
-      //todo：发送请求到后端，将数据传递给后端
+  .then(async() => {
+    buyPart.value.partId = item.partId
+    buyPart.value.merchantId = item.merchantId
+    buyPart.value.amount = item.amount
+    buyPart.value.totalPrice = item.singlePrice * item.amount
+    const res = await addOrder(buyPart.value)
+    if(res.code === 1){ 
       ElMessage({
         type: 'success',
         message: '购买成功，您有新的订单合同需要核对签字',
       })
-    })
-  // catch: 取消按钮点击事件
-    .catch(() => {
+    }else{ 
       ElMessage({
-        type: 'info',
-        message: '已取消',
+        type: 'error',
+        message: '购买失败，请稍后再试',
       })
     }
-  )
+  })
+  // catch: 取消按钮点击事件
+  .catch(() => {
+    ElMessage({
+      type: 'info',
+      message: '已取消',
+    })
+  })
 }
-//假设为后端获取到的数据
-const newDatas = ref([
-  {
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },{
-    partId: 1,
-    name: '零件1',
-    price: 10,
-    merchantId: 1,
-    merchant: '供应商1',
-    color: 1,
-    weight: 1,
-    description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-    amount: 0, //将要购买数量
-  },
-]);
 
 //商品数据部分
 const partData = ref({
-  list: [
-    //返回的数据格式
-    {
-      partId: 1,
-      name: '零件1',
-      singlePrice: 10,
-      merchantId: 1,
-      merchant: '供应商1',
-      color: 1,
-      weight: 1,
-      description: '这是零件1的描述哇哈哈哈哈哈哈啊啊啊啊啊啊哈哈哈哈哈哈哈哈哈',
-      amount: 0, //将要购买数量
-    },
-  ],
+  list: [],
   loading: false, //用于显示加载中
   hasMore: true,  //是否还有更多数据可加载与没有更多数据的显示
   pageSize: 20    //每次响应回来的数量
@@ -311,11 +105,11 @@ const loadMore = async () => {
   
   partData.value.loading = true;
   try {
-    // 获取游标：最后一条数据的 id
+    // 获取游标cursor：最后一条数据的商品id
     const cursor = partData.value.list.length > 0 ? partData.value.list[partData.value.list.length - 1].id : 0;
     
-    //todo：请求后端获取size大小的数据给到newData
-    const newData = newDatas.value;
+    const res = await getGoods(cursor, partData.value.pageSize);
+    const newData = res.data;
     
     if (newData.length < partData.value.pageSize) {
       partData.value.hasMore = false; // 数据不足，说明已加载完
@@ -331,13 +125,15 @@ const loadMore = async () => {
 
 /* 当出现两个按钮（取消和确认时），可在父组件内设置事件@confirm，只有点击确定时才会执行该操作 */
 //当点击确认按钮时会执行该操作
-const collectMerchant = (id) => {
-  //todo：发送请求到后端收藏该供应商（从pinia获取用户id+当前参数供应商id）
-  ElNotification({
-    title: '操作成功',
-    message: '收藏供应商成功，可前往收藏列表查看',
-    type: 'success',
-  })
+const collectMerchant = async (merchantId) => {
+  const res = await addCollect(userStore.id, merchantId)
+  if(res.code===1){ 
+    ElNotification({
+      title: '操作成功',
+      message: '收藏供应商成功，可前往收藏列表查看',
+      type: 'success',
+    })
+  }
 }
 
 //-----------------------生命周期钩子函数----------------------
@@ -354,7 +150,7 @@ onMounted(() => {
       <!-- 头部：搜索相关组件 -->
       <el-header class="header">
         <el-row>
-          <el-col :span="24"><span class="page-title">订单流程管理</span></el-col>
+          <el-col :span="24"><span class="page-title">零件购买</span></el-col>
         </el-row>
         <el-row :gutter="10">
           <el-col :span="24">
@@ -392,18 +188,18 @@ onMounted(() => {
             <div style="flex: 1; display: flex; flex-direction: column;">
               <el-row>
                 <el-col :span="12">
-                  <label style="font-size: 28px;font-weight: bold;">{{ item.name }}</label>
+                  <label style="font-size: 28px;font-weight: bold;">{{ item.partName }}</label>
                 </el-col>
                 <el-col :span="12">
                   <span style="color: blue;">总价：{{ item.singlePrice*item.amount }}元</span>
                 </el-col>
               </el-row>
-              <el-row gutter="10">
-                <el-col :span="12">
+              <el-row>
+                <el-col :span="24">
                   <label style="font-weight: bold;">供应商: </label>
                   <el-popconfirm title="你想要收藏该供应商吗？" @confirm="collectMerchant(item.merchantId)">
                     <template #reference>
-                      <span style="color: rgb(147, 71, 255);">{{ item.merchant }}</span>
+                      <span style="color: rgb(147, 71, 255);">{{ item.merchantName }}</span>
                     </template>
                     <template #actions="{ confirm, cancel }">
                       <el-button size="small" @click="cancel">取消</el-button>
@@ -417,6 +213,8 @@ onMounted(() => {
                     </template>
                   </el-popconfirm>
                 </el-col>
+              </el-row>
+              <el-row>
                 <el-col :span="12">
                   <label style="font-weight: bold;">单价: </label><span style="color: red;"> {{ item.singlePrice }}元</span>
                 </el-col>
@@ -437,14 +235,14 @@ onMounted(() => {
                   <label style="font-weight: bold;">描述：</label>
                 </el-col>
                 <el-col :span="19">
-                  <p style="height: 70px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{ item.description }}</p>
+                  <p style="height: 50px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">{{ item.description }}</p>
                 </el-col>
               </el-row>
             </div>
             <el-row gutter="10">
               <el-col :span="5"></el-col>
               <el-col :span="12">
-                <el-input-number v-model="item.amount" :min="0" size="small" @change="handleChange" />
+                <el-input-number v-model="item.amount" :min="0" :max="item.inventory" size="small" @change="handleChange" />
               </el-col>
               <el-col :span="7">
                 <el-button type="primary" :round="true" :icon="Pointer" @click="buy(item)">购买</el-button>

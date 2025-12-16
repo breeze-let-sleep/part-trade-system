@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hyltest.mapper.VMerchantPartDetailMapper">
+
+    <select id="getGoodsFromCursor" resultType="com.hyltest.pojo.entity.VMerchantPartDetail">
+        select
+            *
+        from (select
+                  id,part_id,part_name,merchant_id,merchant_name,color,weight,description,single_price,inventory
+              from v_merchant_part_detail
+              where is_publish = 1) vmpt
+        where vmpt.id > #{cursor} order by vmpt.id asc limit #{size}
+    </select>
+    <select id="selectPartPageByMerchantId" resultType="com.hyltest.pojo.entity.VMerchantPartDetail">
+        select
+            part_id,part_name,color,weight,description,single_price,inventory,create_time,update_time,is_publish
+        from v_merchant_part_detail
+        where merchant_id = #{merchantId}
+        order by create_time
+        limit #{start}, #{pageSize}
+    </select>
+    <select id="selectLike" resultType="com.hyltest.pojo.entity.VMerchantPartDetail">
+        select
+            part_id,part_name,color,weight,description,single_price,inventory,create_time,update_time,is_publish
+        from v_merchant_part_detail
+        <where>
+            merchant_id = #{merchantId}
+            <if test="partId != null">
+                and part_id = #{partId}
+            </if>
+            <if test="partName != null">
+                and part_name like concat('%',#{partName},'%')
+            </if>
+            <if test="weight != null">
+                and weight = #{weight}
+            </if>
+            <if test="color != null">
+                and color = #{color}
+            </if>
+            <if test="startTime != null and endTime != null">
+                and create_time between #{startTime} and #{endTime}
+            </if>
+            <if test="isPublish != null">
+                and is_publish = #{isPublish}
+            </if>
+        </where>
+    </select>
+    <select id="likeGoods" resultType="com.hyltest.pojo.entity.VMerchantPartDetail">
+        select
+            *
+        from (select
+                  id,part_id,part_name,merchant_id,merchant_name,color,weight,description,single_price,inventory
+              from v_merchant_part_detail
+              where is_publish = 1) vmpt
+        <where>
+            <if test="inputMerchant != null and inputMerchant != ''">
+                and vmpt.merchant_name like concat('%',#{inputMerchant},'%')
+            </if>
+            <if test="inputPart != null and inputPart != ''">
+                and vmpt.part_name like concat('%',#{inputPart},'%')
+            </if>
+        </where>
+        limit 20
+    </select>
+</mapper>
