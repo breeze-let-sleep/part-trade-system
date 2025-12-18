@@ -21,11 +21,19 @@ public class AIChatController {
     @RequestMapping(value = "/chat", produces = "text/html;charset=utf-8")
     public Flux<String> service(
             @RequestParam String prompt,
-            @RequestParam String chatId) {
-        log.info("用户输入：{}",prompt);
+            @RequestParam String chatId,
+            @RequestParam Integer curId) {
+        log.info("用户输入：{}；会话id：{}；用户id：{}",prompt,chatId,curId);
+        StringBuilder message = new StringBuilder();
+        message.append("当前用户的ID是: " + curId + "\\n\\n" +
+                               "用户问题: " + prompt);
+        System.out.println( message);
         return serviceChatClient.prompt()
-                .user(prompt)
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, chatId))
+                .user(message.toString())
+                .advisors(a -> {
+                    a.param(ChatMemory.CONVERSATION_ID, chatId);
+                    a.param("curId", curId);
+                })
                 .stream()
                 .content();
     }

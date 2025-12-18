@@ -87,4 +87,12 @@ public interface OrderMapper {
      */
     @Delete("delete from `order` where id = #{orderId}")
     void deleteOrderById(Integer orderId);
+
+    /**
+     * 根据订单id获取零件数量
+     * @param orderId 订单id
+     * @return 零件数量
+     */
+    @Select("select part_id,amount from `order` where id = #{orderId}")
+    Map<String, Integer> getAmountById(Integer orderId);
 }

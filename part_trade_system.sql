@@ -89,7 +89,7 @@ CREATE TABLE `contract` (
   PRIMARY KEY (`id`),
   KEY `fk_contract_order` (`order_id`),
   CONSTRAINT `fk_contract_order` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='订单合同表';
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='订单合同表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,7 +98,7 @@ CREATE TABLE `contract` (
 
 LOCK TABLES `contract` WRITE;
 /*!40000 ALTER TABLE `contract` DISABLE KEYS */;
-INSERT INTO `contract` VALUES (1,1,'诚信供应商','张三','2025-11-10 10:30:00'),(2,2,NULL,NULL,'2025-11-11 14:30:00'),(3,6,'商家签名','小明','2025-11-29 10:31:34'),(4,7,NULL,NULL,'2025-12-14 20:11:51'),(6,9,NULL,NULL,'2025-12-14 21:32:40');
+INSERT INTO `contract` VALUES (1,1,'诚信供应商','张三','2025-11-10 10:30:00'),(2,2,NULL,NULL,'2025-11-11 14:30:00'),(3,6,'商家签名','小明','2025-11-29 10:31:34'),(4,7,NULL,NULL,'2025-12-14 20:11:51'),(6,9,NULL,NULL,'2025-12-14 21:32:40'),(7,16,NULL,NULL,'2025-12-18 17:01:37');
 /*!40000 ALTER TABLE `contract` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,7 +129,7 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 /*!40000 ALTER TABLE `customer` DISABLE KEYS */;
-INSERT INTO `customer` VALUES (200000,'张三','e10adc3949ba59abbe56e057f20f883e','13500135003','北京市朝阳区XX小区','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','2025-11-05 11:00:00','2025-11-05 11:00:00'),(200001,'李四','e10adc3949ba59abbe56e057f20f883e','13400134004','上海市浦东新区XX路','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','2025-11-06 15:30:00','2025-11-06 15:30:00'),(200002,'顾客小明','81dc9bdb52d04dc20036dbd8313ed055','13400134005','上海市浦东新区凤凰路','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','2025-11-06 15:30:00','2025-12-14 19:51:54'),(200004,'小发','81dc9bdb52d04dc20036dbd8313ed055','12345678901','','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/12/f6789f8c-baa0-46ff-bf32-76c7b53ce62d.png','2025-12-06 10:28:15','2025-12-06 10:32:22'),(200006,'注册new','81dc9bdb52d04dc20036dbd8313ed055','12345678901',NULL,NULL,'2025-12-14 19:26:12','2025-12-14 21:29:37');
+INSERT INTO `customer` VALUES (200000,'张三','e10adc3949ba59abbe56e057f20f883e','13500135003','北京市朝阳区XX小区','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','2025-11-05 11:00:00','2025-11-05 11:00:00'),(200001,'李四','e10adc3949ba59abbe56e057f20f883e','13400134004','上海市浦东新区XX路','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','2025-11-06 15:30:00','2025-11-06 15:30:00'),(200002,'顾客小明','81dc9bdb52d04dc20036dbd8313ed055','13400134005','上海市浦东新区凤凰路','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','2025-11-06 15:30:00','2025-12-18 09:55:35'),(200004,'小发','81dc9bdb52d04dc20036dbd8313ed055','12345678901','','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/12/f6789f8c-baa0-46ff-bf32-76c7b53ce62d.png','2025-12-06 10:28:15','2025-12-06 10:32:22'),(200006,'注册new','81dc9bdb52d04dc20036dbd8313ed055','12345678901',NULL,NULL,'2025-12-14 19:26:12','2025-12-14 21:29:37');
 /*!40000 ALTER TABLE `customer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -161,7 +161,7 @@ CREATE TABLE `merchant` (
 
 LOCK TABLES `merchant` WRITE;
 /*!40000 ALTER TABLE `merchant` DISABLE KEYS */;
-INSERT INTO `merchant` VALUES (100000,'诚信零件供应商','e10adc3949ba59abbe56e057f20f883e','13700137001','广东省深圳市宝安区XX工业园','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','专业生产精密机械零件，10年行业经验','2025-10-20 08:15:00','2025-10-20 08:15:00'),(100001,'恒通五金配件','e10adc3949ba59abbe56e057f20f883e','13600136002','浙江省宁波市鄞州区XX大道','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','主营不锈钢零件、冲压件，支持定制','2025-10-25 14:20:00','2025-10-25 14:20:00'),(100002,'供应商小明','81dc9bdb52d04dc20036dbd8313ed055','13600136003','金湾区','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','匠心传承的公司','2025-11-23 20:20:38','2025-12-14 19:27:21'),(100004,'哇哈哈哈有限公司','81dc9bdb52d04dc20036dbd8313ed055','12345678901','竹9-206','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/12/4cee2f84-6024-4b69-b6be-ebdcafebe2a8.jpg','源于1999年的老品牌','2025-12-14 19:23:50','2025-12-14 19:24:46');
+INSERT INTO `merchant` VALUES (100000,'诚信零件供应商','e10adc3949ba59abbe56e057f20f883e','13700137001','广东省深圳市宝安区XX工业园','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','专业生产精密机械零件，10年行业经验','2025-10-20 08:15:00','2025-10-20 08:15:00'),(100001,'恒通五金配件','e10adc3949ba59abbe56e057f20f883e','13600136002','浙江省宁波市鄞州区XX大道','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/06/d2c0b790-cdaf-4d3e-9a10-27c2d2eca9b6.jpg','主营不锈钢零件、冲压件，支持定制','2025-10-25 14:20:00','2025-10-25 14:20:00'),(100002,'供应商小明','81dc9bdb52d04dc20036dbd8313ed055','13600136003','金湾区','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/12/ecb092be-96e3-42c1-9c26-95f570ab1afe.png','匠心传承的公司','2025-11-23 20:20:38','2025-12-16 19:27:27'),(100004,'哇哈哈哈有限公司','81dc9bdb52d04dc20036dbd8313ed055','12345678901','竹9-206','https://java-web-hyl.oss-cn-beijing.aliyuncs.com/2025/12/4cee2f84-6024-4b69-b6be-ebdcafebe2a8.jpg','源于1999年的老品牌','2025-12-14 19:23:50','2025-12-14 19:24:46');
 /*!40000 ALTER TABLE `merchant` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -210,7 +210,7 @@ CREATE TABLE `operate_log` (
   PRIMARY KEY (`id`),
   KEY `fk_operate_log_admin` (`admin_id`),
   CONSTRAINT `fk_operate_log_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='管理员操作日志表';
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='管理员操作日志表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,7 +219,7 @@ CREATE TABLE `operate_log` (
 
 LOCK TABLES `operate_log` WRITE;
 /*!40000 ALTER TABLE `operate_log` DISABLE KEYS */;
-INSERT INTO `operate_log` VALUES (4,2,'审核供应商【诚信零件供应商】注册','2025-10-20 08:30:00'),(5,1,'处理零件【精密齿轮】库存调整申请','2025-10-10 10:00:00'),(6,2,'查看订单统计数据（2025年11月）','2025-11-15 16:45:00'),(7,1,'root操作了AdminController.deleteAdmin方法','2025-12-05 20:55:24'),(8,1,'root操作了AdminController.deleteAdmin方法','2025-12-05 21:03:22'),(9,1,'root操作了MerchantController.addMerchant方法','2025-12-05 21:32:59'),(10,1,'root操作了AdminController.updateAdmin方法','2025-12-14 19:19:58'),(11,1,'root操作了AdminController.updateAdmin方法','2025-12-14 19:20:21'),(12,1,'root操作了CustomerController.addCustomer方法','2025-12-14 19:21:11'),(13,1,'root操作了CustomerController.updateCustomer方法','2025-12-14 19:21:33'),(14,1,'root操作了CustomerController.deleteCustomer方法','2025-12-14 19:21:52'),(15,1,'root操作了AdminController.updateAdmin方法','2025-12-14 19:22:49'),(16,1,'root操作了AdminController.addAdmin方法','2025-12-14 19:23:10'),(17,1,'root操作了AdminController.deleteAdmin方法','2025-12-14 19:23:18'),(18,1,'root操作了MerchantController.addMerchant方法','2025-12-14 19:23:50'),(19,1,'root操作了MerchantController.updateMerchant方法','2025-12-14 19:24:46'),(20,1,'root操作了MerchantController.deleteMerchant方法','2025-12-14 19:24:57'),(23,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:15:00'),(24,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:16:21'),(25,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:17:07'),(26,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:17:43'),(27,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:19:15'),(28,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:27:42'),(29,1,'root操作了CustomerController.updateCustomer方法','2025-12-14 21:29:37'),(30,1,'root操作了CustomerController.addCustomer方法','2025-12-15 21:06:32'),(31,1,'root操作了CustomerController.updateCustomer方法','2025-12-15 21:06:48'),(32,1,'root操作了CustomerController.updateCustomer方法','2025-12-15 21:08:49'),(33,1,'root操作了CustomerController.deleteCustomer方法','2025-12-15 21:09:03'),(34,1,'root操作了AdminController.updateAdmin方法','2025-12-15 21:09:27'),(35,1,'root操作了AdminController.updateAdmin方法','2025-12-15 21:10:44'),(36,1,'root操作了AdminController.deleteAdmin方法','2025-12-15 21:10:56'),(37,1,'root操作了MerchantController.addMerchant方法','2025-12-15 21:11:27'),(38,1,'root操作了MerchantController.updateMerchant方法','2025-12-15 21:18:03'),(39,1,'root操作了MerchantController.deleteMerchant方法','2025-12-15 21:18:11');
+INSERT INTO `operate_log` VALUES (4,2,'审核供应商【诚信零件供应商】注册','2025-10-20 08:30:00'),(5,1,'处理零件【精密齿轮】库存调整申请','2025-10-10 10:00:00'),(6,2,'查看订单统计数据（2025年11月）','2025-11-15 16:45:00'),(7,1,'root操作了AdminController.deleteAdmin方法','2025-12-05 20:55:24'),(8,1,'root操作了AdminController.deleteAdmin方法','2025-12-05 21:03:22'),(9,1,'root操作了MerchantController.addMerchant方法','2025-12-05 21:32:59'),(10,1,'root操作了AdminController.updateAdmin方法','2025-12-14 19:19:58'),(11,1,'root操作了AdminController.updateAdmin方法','2025-12-14 19:20:21'),(12,1,'root操作了CustomerController.addCustomer方法','2025-12-14 19:21:11'),(13,1,'root操作了CustomerController.updateCustomer方法','2025-12-14 19:21:33'),(14,1,'root操作了CustomerController.deleteCustomer方法','2025-12-14 19:21:52'),(15,1,'root操作了AdminController.updateAdmin方法','2025-12-14 19:22:49'),(16,1,'root操作了AdminController.addAdmin方法','2025-12-14 19:23:10'),(17,1,'root操作了AdminController.deleteAdmin方法','2025-12-14 19:23:18'),(18,1,'root操作了MerchantController.addMerchant方法','2025-12-14 19:23:50'),(19,1,'root操作了MerchantController.updateMerchant方法','2025-12-14 19:24:46'),(20,1,'root操作了MerchantController.deleteMerchant方法','2025-12-14 19:24:57'),(23,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:15:00'),(24,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:16:21'),(25,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:17:07'),(26,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:17:43'),(27,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:19:15'),(28,1,'root操作了AdminController.updateAdmin方法','2025-12-14 21:27:42'),(29,1,'root操作了CustomerController.updateCustomer方法','2025-12-14 21:29:37'),(30,1,'root操作了CustomerController.addCustomer方法','2025-12-15 21:06:32'),(31,1,'root操作了CustomerController.updateCustomer方法','2025-12-15 21:06:48'),(32,1,'root操作了CustomerController.updateCustomer方法','2025-12-15 21:08:49'),(33,1,'root操作了CustomerController.deleteCustomer方法','2025-12-15 21:09:03'),(34,1,'root操作了AdminController.updateAdmin方法','2025-12-15 21:09:27'),(35,1,'root操作了AdminController.updateAdmin方法','2025-12-15 21:10:44'),(36,1,'root操作了AdminController.deleteAdmin方法','2025-12-15 21:10:56'),(37,1,'root操作了MerchantController.addMerchant方法','2025-12-15 21:11:27'),(38,1,'root操作了MerchantController.updateMerchant方法','2025-12-15 21:18:03'),(39,1,'root操作了MerchantController.deleteMerchant方法','2025-12-15 21:18:11'),(40,1,'root操作了MerchantController.updateMerchant方法','2025-12-16 19:27:27');
 /*!40000 ALTER TABLE `operate_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -247,7 +247,7 @@ CREATE TABLE `order` (
   CONSTRAINT `fk_order_customer` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT `fk_order_merchant` FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT `fk_order_part` FOREIGN KEY (`part_id`) REFERENCES `part` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='订单表';
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='订单表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -256,7 +256,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
-INSERT INTO `order` VALUES (1,100000,200000,1,10,1200,1,1,'2025-08-10 10:00:00'),(2,100001,200001,3,5,425,0,0,'2025-09-11 14:30:00'),(3,100000,200000,1,5,600,1,0,'2025-10-11 14:30:00'),(4,100000,200000,4,100,500,1,0,'2025-11-11 14:30:00'),(5,100002,200002,2,10,350,1,1,'2025-11-11 14:30:00'),(6,100002,200002,2,10,350,1,1,'2025-12-12 14:30:00'),(7,100002,200002,14,5,115,0,0,'2025-12-14 20:11:51'),(9,100002,200002,14,6,138,0,0,'2025-12-14 21:32:40');
+INSERT INTO `order` VALUES (1,100000,200000,1,10,1200,1,1,'2025-08-10 10:00:00'),(2,100001,200001,3,5,425,0,0,'2025-09-11 14:30:00'),(3,100000,200000,1,5,600,1,0,'2025-10-11 14:30:00'),(4,100000,200000,4,100,500,1,0,'2025-11-11 14:30:00'),(5,100002,200002,2,10,350,1,1,'2025-11-11 14:30:00'),(6,100002,200002,2,10,350,1,1,'2025-12-12 14:30:00'),(7,100002,200002,14,5,115,0,0,'2025-12-14 20:11:51'),(9,100002,200002,14,6,138,0,0,'2025-12-14 21:32:40'),(16,100000,200002,2,10,350,0,0,'2025-12-18 17:01:36');
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -379,6 +379,29 @@ DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_after_part_insert` AFTER INSERT ON `part` FOR EACH ROW BEGIN
     INSERT INTO merchant_part (merchant_id, part_id)
     VALUES (NEW.merchant_id, NEW.id);
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `trg_auto_unpublish_on_inventory_zero` AFTER UPDATE ON `part` FOR EACH ROW BEGIN
+    -- 判断库存是否小于等于0
+    IF NEW.inventory <= 0 THEN
+        -- 更新对应商品的发布状态为0（未发布）
+        UPDATE merchant_part
+        SET is_publish = 0
+        WHERE part_id = NEW.id;
+    END IF;
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -615,4 +638,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-15 21:57:56
+-- Dump completed on 2025-12-18 19:51:48

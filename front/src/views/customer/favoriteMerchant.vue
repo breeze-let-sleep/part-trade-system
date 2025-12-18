@@ -60,7 +60,7 @@ const deleteRow = (index) => {
         })
         const res=await getCollects(page.currentPage,page.pageSize)
         page.total = res.data.total
-        tableData.value=res.data.ro
+        tableData.value=res.data.rows
         ws
       }else{
         ElMessage({

@@ -3,6 +3,7 @@ package com.hyltest.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.hyltest.pojo.entity.VMerchantPartDetail;
+import com.hyltest.pojo.query.PartQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -24,7 +25,7 @@ public interface VMerchantPartDetailMapper extends BaseMapper<VMerchantPartDetai
      * 获取最新的十件在售零件
      * @return 最新的十件在售零件
      */
-    @Select("select * from v_merchant_part_detail order by create_time desc limit 10")
+    @Select("select merchant_name,part_name,color,weight,description,single_price from v_merchant_part_detail where is_publish = 1 order by create_time desc limit 5")
     List<VMerchantPartDetail> getTenNewGoods();
 
     /**
@@ -75,4 +76,12 @@ public interface VMerchantPartDetailMapper extends BaseMapper<VMerchantPartDetai
      * @return 零件列表
      */
     List<VMerchantPartDetail> likeGoods(String inputMerchant, String inputPart);
+
+    /**
+     * 模糊查询零件
+     *
+     * @param query 零件查询条件
+     * @return 零件列表
+     */
+    List<VMerchantPartDetail> LikeQuery(PartQuery query);
 }

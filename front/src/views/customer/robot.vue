@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref, nextTick, onUnmounted } from 'vue'
+import { useUserStore } from '@/store/user'
 
+const userStore = useUserStore()
 const conversationId = ref('')
 const baseURL = 'http://localhost:8080'
 const list = ref([
@@ -125,7 +127,7 @@ const send = async () => {
     isLoading.value = true
     
     // 创建新连接
-    const url = `${baseURL}/chat?prompt=${encodeURIComponent(val)}&chatId=${conversationId.value}`
+    const url = `${baseURL}/chat?prompt=${encodeURIComponent(val)}&chatId=${conversationId.value}&curId=${userStore.id}`
     createStreamConnection(url)
     
   } catch (error) {

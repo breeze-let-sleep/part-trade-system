@@ -2,10 +2,7 @@ package com.hyltest.mapper;
 
 
 import com.hyltest.pojo.entity.Part;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 /**
  * <p>
@@ -46,4 +43,16 @@ public interface PartMapper {
      */
     @Delete("delete from part where id=#{id} and merchant_id=#{merchantId}")
     int deletePartById(Integer id, Integer merchantId);
+
+    /**
+     * 减少零件库存
+     */
+    @Update("update part set inventory=inventory-#{amount} where id=#{partId}")
+    void decreaseInventory(Integer partId, Integer amount);
+
+    /**
+     * 增加零件库存
+     */
+    @Update("update part set inventory=inventory+#{amount} where id= #{partId}")
+    void increaseInventory(Integer partId, Integer amount);
 }

@@ -3,6 +3,7 @@ package com.hyltest.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.hyltest.pojo.entity.VMerchantPartDetail;
+import com.hyltest.pojo.query.PartQuery;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -38,4 +39,11 @@ public interface IVMerchantPartDetailService  extends IService<VMerchantPartDeta
      * @return 模糊查询结果
      */
     List<VMerchantPartDetail> likeGoods(String inputMerchant, String inputPart);
+
+    /**
+     * 根据用户提出条件模糊查询在售零件
+     * @param query 查询条件
+     * @return 模糊查询结果
+     */
+    List<VMerchantPartDetail> likeQuery(PartQuery query);
 }

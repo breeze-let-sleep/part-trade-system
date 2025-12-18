@@ -28,12 +28,15 @@ public class OrderServiceImpl implements IOrderService {
     private final OrderMapper orderMapper;
     private final VOrderCompleteInfoMapper orderCompleteInfoMapper;
     private final VOrderDetailCompleteMapper orderDetailCompleteMapper;
+    private final PartMapper partMapper;
 
     @Override
     @Transactional
     public void addOrder(Order order) {
         order.setCreateTime(LocalDateTime.now());
-        orderMapper.addOrder( order);
+        orderMapper.addOrder(order);
+        //修改零件数量
+        partMapper.decreaseInventory(order.getPartId(),order.getAmount());
     }
 
     @Override
@@ -62,7 +65,12 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     @Transactional
     public void deleteOrderById(Integer orderId) {
+        //把对应零件数量加回来
+        Map<String, Integer> map = orderMapper.getAmountById(orderId);
+        partMapper.increaseInventory(map.get("part_id"),map.get("amount"));
+        //删除订单
         orderMapper.deleteOrderById(orderId);
+
     }
 
     @Override

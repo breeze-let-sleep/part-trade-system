@@ -3,6 +3,7 @@ package com.hyltest.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hyltest.mapper.VMerchantPartDetailMapper;
 import com.hyltest.pojo.entity.VMerchantPartDetail;
+import com.hyltest.pojo.query.PartQuery;
 import com.hyltest.service.IVMerchantPartDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,5 +39,10 @@ public class VMerchantPartDetailServiceImpl extends ServiceImpl<VMerchantPartDet
     @Override
     public List<VMerchantPartDetail> likeGoods(String inputMerchant, String inputPart) {
         return merchantPartDetailMapper.likeGoods(inputMerchant, inputPart);
+    }
+
+    @Override
+    public List<VMerchantPartDetail> likeQuery(PartQuery query) {
+        return merchantPartDetailMapper.LikeQuery(query);
     }
 }
