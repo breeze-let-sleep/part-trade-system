@@ -64,4 +64,20 @@
         </where>
         limit 20
     </select>
+    <select id="LikeQuery" resultType="com.hyltest.pojo.entity.VMerchantPartDetail">
+        select merchant_name,part_name,color,weight,description,single_price
+        from v_merchant_part_detail
+        <where>
+            is_publish = 1
+            <if test="name != null and name != ''">
+                and part_name like concat('%',#{name},'%')
+            </if>
+            <if test="color != null">
+                and color = #{color}
+            </if>
+            <if test="description != null and description != ''">
+                and description like concat('%',#{description},'%')
+            </if>
+        </where>
+    </select>
 </mapper>
