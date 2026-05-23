@@ -51,8 +51,27 @@ public class TokenFilter implements Filter {
         String requestURI = request.getRequestURI();
         log.info("请求的资源路径为：{}", requestURI);
 
+        // 当设置了token经过filter过滤时，**放行 Knife4j/Swagger 文档页面**
+        if (requestURI.startsWith("/doc.html")
+                // 2. 放行 webjars 静态资源（CSS、JS）
+                || requestURI.startsWith("/webjars/")
+                // 3. 放行 Swagger 的 API 资源配置
+                || requestURI.startsWith("/swagger-resources")
+                // 4. 放行 OpenAPI 的 JSON 数据接口（SpringDoc 用 v3，旧版 Swagger 用 v2）
+                || requestURI.startsWith("/v3/api-docs")
+                // 5. 放行 Swagger UI 相关（如果用原生 swagger-ui）
+                || requestURI.startsWith("/swagger-ui")
+                // 6. 放行 Knife4j 专属接口（部分版本需要）
+                || requestURI.startsWith("/v3/api-docs-ext")
+                // 7. 图标
+                || requestURI.endsWith("favicon.ico")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         //1、判断请求的资源路径是否是登录页面/login，是则直接放行
-        if (requestURI.contains("login") || requestURI.contains("register")){
+        if (requestURI.contains("login") || requestURI.contains("register") || requestURI.contains("code")){
             filterChain.doFilter(request, response);
             return;
         }

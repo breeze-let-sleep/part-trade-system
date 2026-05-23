@@ -1,11 +1,12 @@
 package com.hyltest.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.http.MediaType;
-import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,11 +15,14 @@ import reactor.core.publisher.Flux;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "ai对话接口",description = "获取用户输入并通过流式返回ai响应结果")
+@SecurityRequirement(name = "Authorization")
 public class AIChatController {
 
     private final ChatClient serviceChatClient;
 
-    @RequestMapping(value = "/chat", produces = "text/html;charset=utf-8")
+    @Tag(name = "ai对话接口",description = "获取用户输入并通过流式返回ai响应结果")
+    @GetMapping(value = "/chat", produces = "text/html;charset=utf-8")
     public Flux<String> service(
             @RequestParam String prompt,
             @RequestParam String chatId,

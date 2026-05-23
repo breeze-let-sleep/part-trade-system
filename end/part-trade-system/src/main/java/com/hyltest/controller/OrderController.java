@@ -4,6 +4,9 @@ import com.hyltest.pojo.PageResult;
 import com.hyltest.pojo.Result;
 import com.hyltest.pojo.entity.Order;
 import com.hyltest.service.IOrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,6 +18,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/orders")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "订单管理")
 public class OrderController {
 
     private final IOrderService orderService;
@@ -22,6 +27,7 @@ public class OrderController {
     /**
      * 购买零件（下单）
      */
+    @Operation(summary = "购买零件")
     @PostMapping("/addOrder")
     public Result addOrder(@RequestBody Order order) {
         log.info("购买零件：{}", order);
@@ -32,6 +38,7 @@ public class OrderController {
     /**
      * 获取待支付订单信息
      */
+    @Operation(summary = "获取待支付订单信息")
     @GetMapping("/getPaidMessage")
     public Result getPaidMessage(
             @RequestParam(defaultValue = "1") Integer currentPage,
@@ -50,6 +57,7 @@ public class OrderController {
     /**
      * 支付订单
      */
+    @Operation(summary = "支付订单")
     @PutMapping("/payOrder/{orderId}")
     public Result payOrder(@PathVariable Integer orderId) {
         log.info("支付订单 - 订单ID: {}", orderId);
@@ -70,6 +78,7 @@ public class OrderController {
     /**
      * 删除订单
      */
+    @Operation(summary = "删除订单")
     @DeleteMapping("/removeOrder/{orderId}")
     public Result removeOrder(@PathVariable(required = true) Integer orderId) {
         log.info("删除订单 - 订单ID: {}", orderId);
@@ -95,6 +104,7 @@ public class OrderController {
     /**
      * 模糊查看已完成的所有订单
      */
+    @Operation(summary = "模糊查看已完成的所有订单")
     @GetMapping("/getEndLikeOrders")
     public Result getEndLikeOrders(
             @RequestParam(required = false) String partName,

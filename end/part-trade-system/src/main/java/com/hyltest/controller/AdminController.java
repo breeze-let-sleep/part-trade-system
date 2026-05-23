@@ -7,6 +7,9 @@ import com.hyltest.pojo.PageResult;
 import com.hyltest.pojo.Result;
 import com.hyltest.pojo.entity.Admin;
 import com.hyltest.service.IAdminService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,10 +21,13 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admins")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "管理员接口",description = "用于获取和管理普通管理员的接口，属于系统管理员才有的权限")
 public class AdminController {
 
     private final IAdminService adminService;
 
+    @Operation(summary = "获取单个管理员信息",description = "根据id获取管理员详细信息")
     @GetMapping("/getInfo/{id}")
     public Result getAdminById(@PathVariable Integer id) {
         log.info("获取单个管理员信息：id={}", id);
@@ -29,6 +35,7 @@ public class AdminController {
         return Result.success(admin);
     }
 
+    @Operation(summary = "分页获取管理员列表",description = "分页获取管理员详细信息列表")
     @GetMapping("/getAdmins")
     public Result getAdminList(
             @RequestParam(defaultValue = "1") Integer currentPage,
@@ -38,7 +45,7 @@ public class AdminController {
         return Result.success(pageResult); // 返回PageResult封装的完整数据
     }
 
-
+    @Operation(summary = "模糊查询管理员",description = "模糊查询管理员列表")
     @GetMapping("/likeAdmins")
     public Result searchAdmins(
             @RequestParam(required = false) String input,
@@ -51,6 +58,7 @@ public class AdminController {
         return Result.success(admins);
     }
 
+    @Operation(summary = "新增管理员信息",description = "")
     @AdminLog
     @PostMapping("/addAdmin")
     public Result addAdmin(@RequestBody Admin admin) {
@@ -59,6 +67,7 @@ public class AdminController {
         return Result.success();
     }
 
+    @Operation(summary = "修改管理员信息",description = "")
     @AdminLog
     @PutMapping("/updateAdmin")
     public Result updateAdmin(@RequestBody Admin admin) {
@@ -67,6 +76,7 @@ public class AdminController {
         return Result.success(updatedAdmin);
     }
 
+    @Operation(summary = "删除管理员信息",description = "根据id删除管理员信息")
     @AdminLog
     @DeleteMapping("/deleteAdmin/{id}")
     public Result deleteAdmin(@PathVariable Integer id) {

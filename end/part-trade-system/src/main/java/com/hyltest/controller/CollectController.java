@@ -4,11 +4,12 @@ import com.hyltest.pojo.PageResult;
 import com.hyltest.pojo.Result;
 import com.hyltest.service.ICollectMerchantService;
 import com.hyltest.service.IVMerchantCollectInfoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 /**
  * 收藏相关接口
@@ -16,6 +17,8 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/collects")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "收藏接口",description = "用于获取收藏供应商的接口")
 public class CollectController {
 
     @Autowired
@@ -27,6 +30,7 @@ public class CollectController {
      * 添加供应商为收藏
      * POST /collects/addCollect/{customerId}/{merchantId}
      */
+    @Operation(summary = "添加供应商为收藏")
     @PostMapping("/addCollect/{customerId}/{merchantId}")
     public Result addCollect(@PathVariable("customerId") Integer customerId,
                              @PathVariable("merchantId") Integer merchantId) {
@@ -39,6 +43,7 @@ public class CollectController {
      * 取消收藏
      * DELETE /collects/removeCollect/{customerId}/{merchantId}
      */
+    @Operation(summary = "取消收藏")
     @DeleteMapping("/removeCollect/{customerId}/{merchantId}")
     public Result removeCollect(@PathVariable("customerId") Integer customerId,
                                 @PathVariable("merchantId") Integer merchantId) {
@@ -51,6 +56,7 @@ public class CollectController {
      * 模糊查询已收藏的供应商
      * GET /collects/likeCollects?inputMerchant=xxx&customerId=xxx
      */
+    @Operation(summary = "模糊查询已收藏的供应商")
     @GetMapping("/likeCollects")
     public Result likeCollects(@RequestParam(required = false) String inputMerchant,
                                @RequestParam(required = false) Integer customerId,
@@ -66,6 +72,7 @@ public class CollectController {
      * 分页请求收藏的供应商列表
      * GET /collects/getCollects?currentPage=xxx&pageSize=xxx
      */
+    @Operation(summary = "分页请求收藏的供应商列表")
     @GetMapping("/getCollects")
     public Result getCollects(@RequestParam("currentPage") Integer currentPage,
                               @RequestParam("pageSize") Integer pageSize) {

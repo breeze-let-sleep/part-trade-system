@@ -9,3 +9,7 @@ export const getRegister = (userVO) => {
   console.log(userVO)
   return request.post('/register', userVO)
 }
+
+export const getValidCode = () => { 
+  return request.get('/code')
+}

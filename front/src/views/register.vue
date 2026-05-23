@@ -9,15 +9,31 @@
       <el-form-item label="姓名">
         <el-input v-model="form.name" />
       </el-form-item>
-      <!-- <el-form-item label="电话">
+      <el-form-item label="电话">
         <el-input v-model="form.phone" />
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="密码">
         <el-input v-model="form.password" type="password" />
       </el-form-item>
       <el-form-item label="确认密码">
         <el-input v-model="form.password1" type="password" />
       </el-form-item>
+      <!-- 验证码填写 -->
+      <el-row :gutter="5">
+        <el-col :span="12">
+          <el-form-item label="验证码">
+            <el-input v-model="form.code" placeholder="请输入验证码"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-button 
+            @click="getCode" 
+            :disabled="isCountingDown"
+            :loading="isCountingDown">
+            {{ isCountingDown ? `${countdown}s后重新获取` : '获取验证码' }}
+          </el-button>
+        </el-col>
+      </el-row>
       <!-- 角色单选按钮 -->
       <el-form-item label="角色">
         <el-radio-group v-model="form.role" class="role-radio-group">
@@ -37,26 +53,70 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { ElNotification } from 'element-plus'
-import {getRegister} from '@/api/login'
+import {getRegister,getValidCode} from '@/api/login'
 
 // 路由：用于快速跳转
 const router = useRouter()
 
 const form = reactive({
   name: '',
-  // phone: '',
+  phone: '',
   password: '',
   password1: '',
   role: '',
+  code: ''
 })
 
 const register = reactive({
   name: '',
+  phone: '',
   password: '',
   role: '',
+  code: ''
 })
+
+// 验证码和倒计时相关变量
+const code = ref('')
+const countdown = ref(60)
+const isCountingDown = ref(false)
+const notificationRef = ref(null) // 用于存储通知实例
+
+const getCode = async () => {
+  if (isCountingDown.value) return  // 如果正在倒计时则直接返回
+
+  const res = await getValidCode()
+  code.value = res.data
+  startCountdown()  // 开始倒计时
+}
+
+// 倒计时函数
+const startCountdown = () => {
+  isCountingDown.value = true
+  countdown.value = 60
+  
+  // 只显示一次弹窗，在倒计时开始时
+  notificationRef.value = ElNotification({
+    title: '验证码信息，请在有效期内填写',
+    message: code.value+", 在五分钟内有效。",
+    type: 'info',
+    duration: 0, // 不自动关闭，直到用户手动关闭或倒计时结束
+  })
+  
+  const timer = setInterval(() => {
+    countdown.value--
+    if (countdown.value <= 0) {
+      clearInterval(timer)
+      isCountingDown.value = false
+      // 倒计时结束时关闭通知
+      if (notificationRef.value) {
+        notificationRef.value.close()
+        notificationRef.value = null
+      }
+    }
+  }, 1000)
+}
 
 const onSubmit = async () => {
   /* 向后端发送请求，根据返回的信息进行跳转
@@ -76,10 +136,12 @@ const onSubmit = async () => {
       type: 'info',
     })
     return;
-  }else{
+  } else {
     register.name = form.name
+    register.phone = form.phone
     register.password = form.password
     register.role = form.role
+    register.code = code.value  // 注意这里改为 code.value
     const res = await getRegister(register)
     if (res.code === 1) {
       ElNotification({
@@ -88,9 +150,9 @@ const onSubmit = async () => {
         type: 'success',
       })
       goToLogin()
-    }else{
+    } else {
       ElNotification({
-        title: '注册失败，请重试',
+        title: '注册失败，请检查相关信息并重试',
         type: 'error',
       })
       return;
@@ -105,10 +167,18 @@ const goToLogin = () => {
 
 const reset = () => {
   form.name = ''
-  // form.phone = ''
+  form.phone = ''
+  form.password = ''
   form.password1 = ''
-  form.password2 = ''
   form.role = ''
+  form.code = ''
+  countdown.value = 0  // 重置倒计时
+  isCountingDown.value = false  // 重置倒计时状态
+  // 重置时也关闭通知
+  if (notificationRef.value) {
+    notificationRef.value.close()
+    notificationRef.value = null
+  }
 }
 </script>
 

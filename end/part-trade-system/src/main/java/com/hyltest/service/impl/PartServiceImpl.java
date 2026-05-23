@@ -1,5 +1,10 @@
 package com.hyltest.service.impl;
 
+import com.hyltest.constant.MessageConstant;
+import com.hyltest.exception.DeletionNotAllowedException;
+import com.hyltest.exception.InsertFailException;
+import com.hyltest.exception.UnknownException;
+import com.hyltest.exception.UpdateFailException;
 import com.hyltest.mapper.MerchantPartMapper;
 import com.hyltest.mapper.VMerchantPartDetailMapper;
 import com.hyltest.pojo.entity.VMerchantPartDetail;
@@ -66,8 +71,12 @@ public class PartServiceImpl implements IPartService {
         part.setUpdateTime(LocalDateTime.now());
         part.setMerchantId(merchantId);
         // 新增零件到part表(通过触发器可以直接关联到零件管理表，不需要再次执行操作)
-        int partResult = partMapper.insertNewPart(part);
-        return partResult > 0 ? 1 : 0;
+        try {
+            partMapper.insertNewPart(part);
+        } catch (Exception e) {
+            throw new InsertFailException(MessageConstant.UNKNOWN_ERROR);
+        }
+        return 1;
     }
 
     @Override
@@ -75,20 +84,31 @@ public class PartServiceImpl implements IPartService {
         merchantId=CurrentHolder.getCurrentId();
         part.setMerchantId(merchantId);
         part.setUpdateTime(LocalDateTime.now());
-        return partMapper.updatePart(part);
+        try {
+            return partMapper.updatePart(part);
+        } catch (Exception e) {
+            throw new UpdateFailException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 
     @Override
     public int publishPart(Integer id, Integer isPublish) {
         merchantId=CurrentHolder.getCurrentId();
-        return merchantPartMapper.updatePublishStatus(id, merchantId, isPublish);
+        try {
+            return merchantPartMapper.updatePublishStatus(id, merchantId, isPublish);
+        } catch (Exception e) {
+            throw new UpdateFailException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 
     @Override
     public int deletePart(Integer id) {
         merchantId=CurrentHolder.getCurrentId();
         // 删除零件从part表(通过触发器可以直接关联到零件管理表，不需要再次执行操作)
-        int partResult = partMapper.deletePartById(id,merchantId);
-        return partResult > 0 ? 1 : 0;
+        try {
+            return partMapper.deletePartById(id,merchantId);
+        } catch (Exception e) {
+            throw new DeletionNotAllowedException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 }

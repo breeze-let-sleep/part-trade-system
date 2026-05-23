@@ -1,11 +1,14 @@
 package com.hyltest.service.impl;
 
+import com.hyltest.constant.MessageConstant;
+import com.hyltest.exception.UnknownException;
 import com.hyltest.mapper.ContractMapper;
 import com.hyltest.mapper.OrderMapper;
 import com.hyltest.service.IContractService;
 import com.hyltest.utils.CurrentHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -24,6 +27,7 @@ public class ContractServiceImpl implements IContractService {
     private final ContractMapper contractMapper;
     private final OrderMapper orderMapper;
 
+    @Transactional
     @Override
     public String signature(Integer orderId, String value) {
         Integer userId = CurrentHolder.getCurrentId();
@@ -33,10 +37,18 @@ public class ContractServiceImpl implements IContractService {
         if (userId < 200000) {
             //供应商
             //对订单进行签名
-            contractMapper.signatureToMerchant(orderId,value);
+            try {
+                contractMapper.signatureToMerchant(orderId,value);
+            } catch (Exception e) {
+                throw new UnknownException(MessageConstant.UNKNOWN_ERROR);
+            }
         }else {
             //顾客
-            contractMapper.signatureToCustomer(orderId,value);
+            try {
+                contractMapper.signatureToCustomer(orderId,value);
+            } catch (Exception e) {
+                throw new UnknownException(MessageConstant.UNKNOWN_ERROR);
+            }
         }
         //判断订单是否已经全部完成签名，是则设置订单状态为成功
         Map<String, String> map = contractMapper.getContractStatus(orderId);
@@ -46,8 +58,12 @@ public class ContractServiceImpl implements IContractService {
         System.out.println(val3);
         System.out.println(val4);
         if (val3 != null && val4 != null) {
-            orderMapper.updateOrderSuccess(orderId);
+            try {
+                orderMapper.updateOrderSuccess(orderId);
+            } catch (Exception e) {
+                throw new UnknownException(MessageConstant.UNKNOWN_ERROR);
+            }
         }
-        return null;
+        return "";
     }
 }

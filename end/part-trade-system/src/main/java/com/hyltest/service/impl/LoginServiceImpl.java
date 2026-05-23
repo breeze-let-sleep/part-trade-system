@@ -1,5 +1,10 @@
 package com.hyltest.service.impl;
 
+import com.hyltest.constant.MessageConstant;
+import com.hyltest.exception.AccountNotFoundException;
+import com.hyltest.exception.InsertFailException;
+import com.hyltest.exception.PasswordErrorException;
+import com.hyltest.exception.UnknownException;
 import com.hyltest.mapper.AdminMapper;
 import com.hyltest.mapper.CustomerMapper;
 import com.hyltest.mapper.MerchantMapper;
@@ -36,9 +41,17 @@ public class LoginServiceImpl implements LoginService {
         userVO.setPassword(MD5Utils.encrypt(userVO.getPassword()));
         //根据选择的角色对对应表进行增加
         if (userVO.getRole() == 1){
-            merchantMapper.register(userVO);
+            try {
+                merchantMapper.register(userVO);
+            } catch (Exception e) {
+                throw new UnknownException(MessageConstant.UNKNOWN_ERROR);
+            }
         }else if (userVO.getRole() == 2){
-            customerMapper.register(userVO);
+            try {
+                customerMapper.register(userVO);
+            } catch (Exception e) {
+                throw new UnknownException(MessageConstant.UNKNOWN_ERROR);
+            }
         }
     }
 
@@ -55,7 +68,7 @@ public class LoginServiceImpl implements LoginService {
                 Map<String, Object> claims = genrateInfoMap(user.getId(), user.getName(),userVO.getRole());
                 return JWTUtils.generateToken(claims);
             }else {
-                return "账户非法或密码错误";
+                throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
             }
         }else if (role == 2){
             //顾客登录
@@ -64,7 +77,7 @@ public class LoginServiceImpl implements LoginService {
                 Map<String, Object> claims = genrateInfoMap(user.getId(), user.getName(),userVO.getRole());
                 return JWTUtils.generateToken(claims);
             }else {
-                return "账户非法或密码错误";
+                throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
             }
         }else {
             Admin user = adminMapper.getInfoByName(userVO);
@@ -72,7 +85,7 @@ public class LoginServiceImpl implements LoginService {
                 Map<String, Object> claims = genrateInfoMap(user.getId(), user.getName(),userVO.getRole());
                 return JWTUtils.generateToken(claims);
             }else {
-                return "账户非法或密码错误";
+                throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
             }
         }
     }

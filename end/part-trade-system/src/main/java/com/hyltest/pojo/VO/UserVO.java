@@ -19,8 +19,12 @@ import lombok.NoArgsConstructor;
 public class UserVO {
 
     private String name;
+    private String phone;
     private String password;
     private int role;
     private String createTime;
     private String updateTime;
+
+    // 验证码
+    private String code;
 }

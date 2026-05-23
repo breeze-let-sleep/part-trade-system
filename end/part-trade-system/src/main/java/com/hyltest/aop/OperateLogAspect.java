@@ -24,6 +24,8 @@ public class OperateLogAspect {
     private final AdminMapper adminMapper;
     private final OperateLogMapper operateLogMapper;
 
+    
+
     @Around("@annotation(com.hyltest.anno.AdminLog)")
     public Object recordAdminOperateLog(ProceedingJoinPoint pjp) throws Throwable{
         OperateLog operateLog = new OperateLog();

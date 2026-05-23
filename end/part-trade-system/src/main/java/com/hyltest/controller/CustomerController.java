@@ -6,6 +6,9 @@ import com.hyltest.pojo.PageResult;
 import com.hyltest.pojo.Result;
 import com.hyltest.pojo.entity.Customer;
 import com.hyltest.service.ICustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,6 +21,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/customers")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "顾客接口",description = "用于获取和管理顾客信息")
 public class CustomerController {
 
     private final ICustomerService customerService;
@@ -25,6 +30,7 @@ public class CustomerController {
     /**
      * 单个顾客信息获取
      */
+    @Operation(summary = "获取单个顾客信息",description = "根据id获取顾客信息")
     @GetMapping("/getInfo/{id}")
     public Result getCustomerInfo(@PathVariable Integer id) {
         log.info("获取顾客信息：id={}", id);
@@ -35,6 +41,7 @@ public class CustomerController {
     /**
      * 分页请求顾客列表
      */
+    @Operation(summary = "分页请求顾客列表",description = "分页获取顾客列表")
     @GetMapping("/getCustomers")
     public Result getCustomerPage(Integer currentPage, Integer pageSize) {
         log.info("分页获取顾客列表：currentPage={}, pageSize={}", currentPage, pageSize);
@@ -45,17 +52,19 @@ public class CustomerController {
     /**
      * 新增顾客信息
      */
+    @Operation(summary = "新增顾客信息",description = "新增顾客信息")
     @AdminLog
     @PostMapping("/addCustomer")
     public Result addCustomer(@RequestBody Customer customer) {
         log.info("新增顾客：{}", customer);
-        int result = customerService.addCustomer(customer);
-        return result > 0 ? Result.success() : Result.error("新增失败");
+        customerService.addCustomer(customer);
+        return Result.success();
     }
 
     /**
      * 修改顾客信息
      */
+    @Operation(summary = "修改顾客信息",description = "修改顾客信息")
     @AdminLog
     @PutMapping("/updateCustomer")
     public Result updateCustomer(@RequestBody Customer customer) {
@@ -67,6 +76,7 @@ public class CustomerController {
     /**
      * 删除顾客信息
      */
+    @Operation(summary = "删除顾客信息",description = "删除顾客信息")
     @AdminLog
     @DeleteMapping("/deleteCustomer/{id}")
     public Result deleteCustomer(@PathVariable Integer id) {
@@ -78,7 +88,7 @@ public class CustomerController {
     /**
      * 模糊查询顾客列表
      */
-
+    @Operation(summary = "模糊查询顾客列表",description = "模糊查询顾客列表")
     @GetMapping("/likeCustomers")
     public Result likeCustomer(
             @RequestParam(required = false) String likeName,

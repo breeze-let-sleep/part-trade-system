@@ -1,5 +1,10 @@
 package com.hyltest.service.impl;
 
+import com.hyltest.constant.MessageConstant;
+import com.hyltest.exception.AccountNotFoundException;
+import com.hyltest.exception.DeletionNotAllowedException;
+import com.hyltest.exception.UnknownException;
+import com.hyltest.exception.UpdateFailException;
 import com.hyltest.service.IAdminService;
 import com.hyltest.utils.MD5Utils;
 import org.springframework.stereotype.Service;
@@ -30,7 +35,11 @@ public class AdminServiceImpl implements IAdminService {
      */
     @Override
     public Admin getAdminById(Integer id) {
-        return adminMapper.selectById(id);
+        Admin admin = adminMapper.selectById(id);
+        if (admin==null){
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
+        return admin;
     }
 
 
@@ -66,7 +75,11 @@ public class AdminServiceImpl implements IAdminService {
         admin.setCreateTime(LocalDateTime.now());
         admin.setUpdateTime(LocalDateTime.now());
         admin.setPassword(MD5Utils.encrypt(admin.getPassword()));
-        adminMapper.insertNewAdmin(admin);
+        try {
+            adminMapper.insertNewAdmin(admin);
+        }catch (Exception e){
+            throw new UnknownException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 
     /**
@@ -79,8 +92,12 @@ public class AdminServiceImpl implements IAdminService {
         if (pwd == null || pwd.trim().isEmpty()){
             admin.setPassword(null);
         }else admin.setPassword(MD5Utils.encrypt(pwd));
-        adminMapper.updateAdmin(admin);
-        return adminMapper.selectById(admin.getId());
+        try {
+            adminMapper.updateAdmin(admin);
+            return adminMapper.selectById(admin.getId());
+        } catch (Exception e) {
+            throw new UpdateFailException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 
     /**
@@ -89,6 +106,10 @@ public class AdminServiceImpl implements IAdminService {
      */
     @Override
     public boolean deleteAdmin(Integer id) {
-        return adminMapper.deleteById(id) > 0;
+        try {
+            return adminMapper.deleteById(id) > 0;
+        } catch (Exception e) {
+            throw new DeletionNotAllowedException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 }

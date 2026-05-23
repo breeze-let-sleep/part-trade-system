@@ -33,7 +33,7 @@ public class VOrderCompleteInfoServiceImpl implements IVOrderCompleteInfoService
         //先获取当前对象的id判断要获取哪些订单
         Integer curId = CurrentHolder.getCurrentId();
         PageResult pageResult = new PageResult();
-        //todo 分页查询仍然存在问题，不应是只查询isSuccess，要联表查询
+        //不应是只查询isSuccess，要联表查询
         if (curId < 200000) {
             //供应商
             //1、获取总记录数

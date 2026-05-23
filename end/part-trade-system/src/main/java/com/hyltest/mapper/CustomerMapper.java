@@ -25,7 +25,7 @@ public interface CustomerMapper {
     /**
      *  注册顾客
      */
-    @Insert("insert into customer(name,password,create_time,update_time) values(#{name},#{password},#{createTime},#{updateTime})")
+    @Insert("insert into customer(name,phone,password,create_time,update_time) values(#{name},#{phone},#{password},#{createTime},#{updateTime})")
     void register(UserVO userVO);
 
     /**

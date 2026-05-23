@@ -1,5 +1,7 @@
 package com.hyltest.service.impl;
 
+import com.hyltest.constant.MessageConstant;
+import com.hyltest.exception.*;
 import com.hyltest.mapper.MerchantMapper;
 import com.hyltest.pojo.PageResult;
 import com.hyltest.pojo.entity.Merchant;
@@ -28,7 +30,11 @@ public class MerchantServiceImpl implements IMerchantService {
 
     @Override
     public Merchant getMerchantById(Integer id) {
-        return merchantMapper.selectById(id);
+        try {
+            return merchantMapper.selectById(id);
+        } catch (Exception e) {
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
     }
 
     @Override
@@ -44,7 +50,12 @@ public class MerchantServiceImpl implements IMerchantService {
     @Override
     public PageResult searchMerchants(String likeName, String likeAddress, LocalDateTime startTime, LocalDateTime endTime) {
         PageResult pageResult = new PageResult();
-        List<Merchant> list = merchantMapper.searchMerchants(likeName, likeAddress, startTime, endTime);
+        List<Merchant> list = null;
+        try {
+            list = merchantMapper.searchMerchants(likeName, likeAddress, startTime, endTime);
+        } catch (Exception e) {
+            throw new UnknownException(MessageConstant.UNKNOWN_ERROR);
+        }
         pageResult.setRows(list);
         pageResult.setTotal(list.size());
         return pageResult;
@@ -56,7 +67,11 @@ public class MerchantServiceImpl implements IMerchantService {
         merchant.setCreateTime(LocalDateTime.now());
         merchant.setUpdateTime(LocalDateTime.now());
         merchant.setPassword(MD5Utils.encrypt(merchant.getPassword()));
-        merchantMapper.insertNewMerchant(merchant);
+        try {
+            merchantMapper.insertNewMerchant(merchant);
+        } catch (Exception e) {
+            throw new InsertFailException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 
     @Override
@@ -66,13 +81,21 @@ public class MerchantServiceImpl implements IMerchantService {
         String pwd = merchant.getPassword();
 
         if (pwd == null || pwd.trim().isEmpty()){
-            merchant.setPassword(null);
+            throw new UnknownException(MessageConstant.PASSWORD_ERROR);
         }else merchant.setPassword(MD5Utils.encrypt(pwd));
-        merchantMapper.updateMerchant(merchant);
+        try {
+            merchantMapper.updateMerchant(merchant);
+        } catch (Exception e) {
+            throw new UpdateFailException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 
     @Override
     public boolean deleteMerchant(Integer id) {
-        return merchantMapper.deleteById(id) > 0;
+        try {
+            return merchantMapper.deleteById(id) > 0;
+        } catch (Exception e) {
+            throw new DeletionNotAllowedException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 }

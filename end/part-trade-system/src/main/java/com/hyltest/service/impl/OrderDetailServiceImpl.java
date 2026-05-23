@@ -1,5 +1,8 @@
 package com.hyltest.service.impl;
 
+import com.hyltest.constant.MessageConstant;
+import com.hyltest.exception.UnknownException;
+import com.hyltest.exception.UpdateFailException;
 import com.hyltest.mapper.OrderDetailMapper;
 import com.hyltest.mapper.VOrderCompleteInfoMapper;
 import com.hyltest.mapper.VOrderDetailCompleteMapper;
@@ -81,12 +84,20 @@ public class OrderDetailServiceImpl implements IOrderDetailService {
     @Override
     public void evaluateOrder(OrderDetail orderDetail) {
         orderDetail.setUpdateTime(LocalDateTime.now());
-        orderDetailMapper.updateOrderHasTake(orderDetail);
+        try {
+            orderDetailMapper.updateOrderHasTake(orderDetail);
+        } catch (Exception e) {
+            throw new UpdateFailException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 
     @Override
     public void deliverById(Integer id) {
         LocalDateTime now = LocalDateTime.now();
-        orderDetailMapper.updateOrderDeliver(id,now);
+        try {
+            orderDetailMapper.updateOrderDeliver(id,now);
+        } catch (Exception e) {
+            throw new UpdateFailException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 }

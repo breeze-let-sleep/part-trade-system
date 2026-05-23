@@ -1,5 +1,8 @@
 package com.hyltest.service.impl;
 
+import com.hyltest.constant.MessageConstant;
+import com.hyltest.exception.UnknownException;
+import com.hyltest.exception.UpdateFailException;
 import com.hyltest.mapper.OrderMapper;
 import com.hyltest.mapper.PartMapper;
 import com.hyltest.mapper.VOrderCompleteInfoMapper;
@@ -34,9 +37,13 @@ public class OrderServiceImpl implements IOrderService {
     @Transactional
     public void addOrder(Order order) {
         order.setCreateTime(LocalDateTime.now());
-        orderMapper.addOrder(order);
-        //修改零件数量
-        partMapper.decreaseInventory(order.getPartId(),order.getAmount());
+        try {
+            orderMapper.addOrder(order);
+            //修改零件数量
+            partMapper.decreaseInventory(order.getPartId(),order.getAmount());
+        } catch (Exception e) {
+            throw new UnknownException(MessageConstant.UNKNOWN_ERROR);
+        }
     }
 
     @Override
@@ -58,18 +65,26 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     @Transactional
     public boolean payOrder(Integer orderId) {
-        orderMapper.updatePayStatus(orderId);
+        try {
+            orderMapper.updatePayStatus(orderId);
+        } catch (Exception e) {
+            throw new UpdateFailException(MessageConstant.UNKNOWN_ERROR);
+        }
         return true;
     }
 
     @Override
     @Transactional
     public void deleteOrderById(Integer orderId) {
-        //把对应零件数量加回来
-        Map<String, Integer> map = orderMapper.getAmountById(orderId);
-        partMapper.increaseInventory(map.get("part_id"),map.get("amount"));
-        //删除订单
-        orderMapper.deleteOrderById(orderId);
+        try {
+            //把对应零件数量加回来
+            Map<String, Integer> map = orderMapper.getAmountById(orderId);
+            partMapper.increaseInventory(map.get("part_id"),map.get("amount"));
+            //删除订单
+            orderMapper.deleteOrderById(orderId);
+        } catch (Exception e) {
+            throw new UnknownException(MessageConstant.UNKNOWN_ERROR);
+        }
 
     }
 

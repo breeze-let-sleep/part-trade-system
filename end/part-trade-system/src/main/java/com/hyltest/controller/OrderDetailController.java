@@ -5,6 +5,9 @@ import com.hyltest.pojo.PageResult;
 import com.hyltest.pojo.Result;
 import com.hyltest.pojo.entity.OrderDetail;
 import com.hyltest.service.IOrderDetailService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/details")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "订单详情接口")
 public class OrderDetailController {
 
     private final IOrderDetailService orderDetailService;
 
+    @Operation(summary = "分页获取当前用户处理中的订单")
     @GetMapping("/getProcessingOrders")
     public Result getProcessingOrders(Integer currentPage, Integer pageSize) {
         log.info("分页获取当前用户处理中的订单：currentPage: {}, pageSize: {}", currentPage, pageSize);
@@ -24,6 +30,7 @@ public class OrderDetailController {
         return Result.success(pageResult);
     }
 
+    @Operation(summary = "分页获取当前用户已经结束的订单")
     @GetMapping("/getEndOrders")
     public Result getEndOrders(Integer currentPage, Integer pageSize) {
         log.info("分页获取当前用户已经结束的订单：currentPage: {}, pageSize: {}", currentPage, pageSize);
@@ -31,6 +38,7 @@ public class OrderDetailController {
         return Result.success(pageResult);
     }
 
+    @Operation(summary = "收货并评价订单")
     @PutMapping("/evaluateOrder")
     public Result evaluateOrder(@RequestBody OrderDetail orderDetail) {
         log.info("收货并评价订单：orderId: {}, star: {}, evaluate: {}", orderDetail.getOrderId(), orderDetail.getStar(),orderDetail.getEvaluate());
@@ -38,6 +46,7 @@ public class OrderDetailController {
         return Result.success();
     }
 
+    @Operation(summary = "发货")
     @PutMapping("/deliver/{id}")
     public Result deliver(@PathVariable Integer id) {
         log.info("发货：订单详情id: {}", id);

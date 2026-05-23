@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref, nextTick, onUnmounted } from 'vue'
 import { useUserStore } from '@/store/user'
+import { marked } from 'marked'
+
 
 const userStore = useUserStore()
 const conversationId = ref('')
@@ -11,6 +13,12 @@ const list = ref([
 const msg = ref('')
 const isLoading = ref(false)
 let abortController = null // 使用全局变量管理 AbortController
+
+// 配置 marked 选项
+marked.setOptions({
+  breaks: true, // 支持 GitHub 风格的换行
+  gfm: true, // 支持 GitHub Flavored Markdown
+})
 
 // 创建新的流式连接
 const createStreamConnection = (url) => {
@@ -66,7 +74,7 @@ const createStreamConnection = (url) => {
           list.value[list.value.length - 1] = {
             role: 'assistant',
             content: assistantText,
-            isHtml: true // 标记内容包含HTML
+            isMarkdown: true // 标记内容包含 Markdown
           }
           
           // 触发响应式更新
@@ -94,7 +102,7 @@ const createStreamConnection = (url) => {
         list.value[list.value.length - 1] = {
           role: 'assistant', 
           content: '抱歉，连接出现问题，请稍后重试😔',
-          isHtml: false
+          isMarkdown: false
         }
         list.value = [...list.value] // 触发响应式更新
       }
@@ -112,11 +120,11 @@ const send = async () => {
 
   try {
     // 添加用户消息
-    list.value.push({ role: 'user', content: val, isHtml: false })
+    list.value.push({ role: 'user', content: val, isMarkdown: false })
     msg.value = ''
     
     // 添加空的助手消息（占位）
-    list.value.push({ role: 'assistant', content: '', isHtml: true })
+    list.value.push({ role: 'assistant', content: '', isMarkdown: true })
     
     // 触发响应式更新
     list.value = [...list.value]
@@ -135,7 +143,7 @@ const send = async () => {
     list.value.push({
       role: 'assistant',
       content: '发送失败，请检查网络连接😔',
-      isHtml: false
+      isMarkdown: false
     })
     // 触发响应式更新
     list.value = [...list.value]
@@ -179,15 +187,15 @@ onUnmounted(() => {
             :class="['bubble', item.role === 'user' ? 'right' : 'left']"
           >
             <span 
-              v-if="!item.isHtml" 
+              v-if="!item.isMarkdown" 
               class="text"
             >
               {{ item.content }}
             </span>
             <div 
               v-else 
-              class="text html-content"
-              v-html="item.content"
+              class="text markdown-content"
+              v-html="marked.parse(item.content)"
             ></div>
           </div>
           <!-- 加载指示器 -->
@@ -312,32 +320,172 @@ onUnmounted(() => {
   position: relative;
 }
 
-.html-content {
-  /* 为HTML内容设置样式 */
-  line-height: 1.5;
+.markdown-content {
+  /* 为 Markdown 渲染内容设置样式 */
+  line-height: 1.6;
+  word-wrap: break-word;
 }
 
-.html-content table {
+.markdown-content p {
+  margin: 0.5em 0;
+}
+
+.markdown-content p:first-child {
+  margin-top: 0;
+}
+
+.markdown-content p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-content pre {
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+
+.markdown-content code {
+  background-color: #f4f4f4;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.markdown-content ul, .markdown-content ol {
+  margin: 0.5em 0;
+  padding-left: 20px;
+}
+
+.markdown-content li {
+  margin: 0.3em 0;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid #ddd;
+  padding-left: 10px;
+  margin: 0.5em 0;
+  color: #666;
+}
+
+.markdown-content table {
   width: 100%;
   border-collapse: collapse;
-  margin: 10px 0;
+  margin: 0.5em 0;
   font-size: 14px;
 }
 
-.html-content th, .html-content td {
-  border: 1px solid black;
+.markdown-content th, .markdown-content td {
+  border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
 }
 
-.html-content th {
-  background-color: #cccccc;
+.markdown-content th {
+  background-color: #f4f4f4;
   font-weight: bold;
   text-align: center;
 }
 
-.html-content tr:nth-child(even) {
+.markdown-content tr:nth-child(even) {
   background-color: #f9f9f9;
+}
+
+.markdown-content a {
+  color: #4063ff;
+  text-decoration: none;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+}
+
+.markdown-content strong {
+  font-weight: bold;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+/* 使用深度选择器确保样式生效 */
+:deep(.markdown-content p) {
+  margin: 0.5em 0;
+}
+
+:deep(.markdown-content pre) {
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+
+:deep(.markdown-content code) {
+  background-color: #f4f4f4;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+}
+
+:deep(.markdown-content ul), :deep(.markdown-content ol) {
+  margin: 0.5em 0;
+  padding-left: 20px;
+}
+
+:deep(.markdown-content li) {
+  margin: 0.3em 0;
+}
+
+:deep(.markdown-content blockquote) {
+  border-left: 4px solid #ddd;
+  padding-left: 10px;
+  margin: 0.5em 0;
+  color: #666;
+}
+
+:deep(.markdown-content table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  font-size: 14px;
+}
+
+:deep(.markdown-content th), :deep(.markdown-content td) {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+:deep(.markdown-content th) {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  text-align: center;
+}
+
+:deep(.markdown-content tr:nth-child(even)) {
+  background-color: #f9f9f9;
+}
+
+:deep(.markdown-content a) {
+  color: #4063ff;
+  text-decoration: none;
+}
+
+:deep(.markdown-content strong) {
+  font-weight: bold;
+}
+
+:deep(.markdown-content em) {
+  font-style: italic;
 }
 
 .bubble.left .text {

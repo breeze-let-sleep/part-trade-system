@@ -1,5 +1,8 @@
 package com.hyltest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import com.hyltest.pojo.entity.Part;
@@ -15,6 +18,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/parts")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "零件接口")
 public class PartController {
 
     private final IPartService partService;
@@ -22,6 +27,7 @@ public class PartController {
     /**
      * 分页请求供应商的零件列表（支持无merchantId查询所有已发布零件）
      */
+    @Operation(summary = "分页获取零件列表")
     @GetMapping("/getParts")
     public Result getPartPage(Integer currentPage, Integer pageSize) {
         log.info("分页获取零件列表： currentPage={}, pageSize={}", currentPage, pageSize);
@@ -33,6 +39,7 @@ public class PartController {
     /**
      * 模糊查询零件
      */
+    @Operation(summary = "模糊查询零件")
     @GetMapping("/likeParts")
     public Result likePart(
             @RequestParam(required = false) Integer partId,
@@ -55,40 +62,44 @@ public class PartController {
     /**
      * 新增零件信息
      */
+    @Operation(summary = "新增零件信息")
     @PostMapping("/addPart")
     public Result addPart(@RequestBody Part part) {
         log.info("新增零件：{}", part);
-        int result = partService.addPart(part);
-        return result > 0 ? Result.success() : Result.error("新增失败");
+        partService.addPart(part);
+        return Result.success();
     }
 
     /**
      * 修改零件信息
      */
+    @Operation(summary = "修改零件信息")
     @PutMapping("/updatePart")
     public Result updatePart(@RequestBody Part part) {
         log.info("修改零件信息：{}", part);
-        int result = partService.updatePart(part);
-        return result > 0 ? Result.success() : Result.error("修改失败");
+        partService.updatePart(part);
+        return Result.success();
     }
 
     /**
      * 修改零件上线信息
      */
+    @Operation(summary = "修改零件上线信息")
     @PutMapping("/publishPart/{id}/{isPublish}")
     public Result publishPart(@PathVariable Integer id, @PathVariable Integer isPublish) {
         log.info("修改零件发布状态：id={}, isPublish={}", id, isPublish);
-        int result = partService.publishPart(id, isPublish);
-        return result > 0 ? Result.success() : Result.error("修改发布状态失败");
+        partService.publishPart(id, isPublish);
+        return Result.success();
     }
 
     /**
      * 删除零件信息
      */
+    @Operation(summary = "删除零件信息")
     @DeleteMapping("/deletePart/{id}")
     public Result deletePart(@PathVariable Integer id) {
         log.info("删除零件：id={}", id);
-        int result = partService.deletePart(id);
-        return result > 0 ? Result.success() : Result.error("删除失败");
+        partService.deletePart(id);
+        return Result.success();
     }
 }

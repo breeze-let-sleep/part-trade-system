@@ -30,9 +30,21 @@ spring:
     #开启驼峰命名：字段名（part_id）和属性名（partId）符合驼峰命名规则则自动映射
     map-underscore-to-camel-case: true
 
+  #配置redis的配置信息
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 1234
+      database: 10
+
 #阿里云OSS的bucket配置信息
 aliyun:
   oss:
     endpoint: ${ENDPOINT}
     bucketName: ${BUCKET_NAME}
     region: ${REGION}
+
+# Knife4j 官方配置
+knife4j:
+  enable: true

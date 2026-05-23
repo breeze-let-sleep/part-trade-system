@@ -5,6 +5,9 @@ import com.hyltest.pojo.PageResult;
 import com.hyltest.pojo.Result;
 import com.hyltest.pojo.entity.Merchant;
 import com.hyltest.service.IMerchantService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,10 +20,13 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/merchants")
+@SecurityRequirement(name = "Authorization")
+@Tag(name = "供应商接口",description = "供应商接口")
 public class MerchantController {
 
     private final IMerchantService merchantService;
 
+    @Operation(summary = "获取单个供应商信息")
     @GetMapping("/getInfo/{id}")
     public Result getMerchantById(@PathVariable Integer id) {
         log.info("获取单个供应商信息：id={}", id);
@@ -32,6 +38,7 @@ public class MerchantController {
      * 分页接口：返回完整分页数据（总记录数+当前页数据）
      * 调用getMerchantPage方法，用上PageResult
      */
+    @Operation(summary = "分页获取供应商列表")
     @GetMapping("/getMerchants")
     public Result getMerchantList(
             @RequestParam(defaultValue = "1") int currentPage,
@@ -41,6 +48,7 @@ public class MerchantController {
         return Result.success(pageResult); // 返回PageResult封装的完整数据
     }
 
+    @Operation(summary = "模糊查询供应商列表")
     @GetMapping("/likeMerchants")
     public Result searchMerchants(
             @RequestParam(required = false) String likeName,
@@ -54,6 +62,7 @@ public class MerchantController {
         return Result.success(merchants);
     }
 
+    @Operation(summary = "新增供应商信息")
     @AdminLog
     @PostMapping("/addMerchant")
     public Result addMerchant(@RequestBody Merchant merchant) {
@@ -62,6 +71,7 @@ public class MerchantController {
         return Result.success();
     }
 
+    @Operation(summary = "修改供应商信息")
     @AdminLog
     @PutMapping("/updateMerchant")
     public Result updateMerchant(@RequestBody Merchant merchant) {
@@ -70,11 +80,12 @@ public class MerchantController {
         return Result.success();
     }
 
+    @Operation(summary = "删除供应商信息")
     @AdminLog
     @DeleteMapping("/deleteMerchant/{id}")
     public Result deleteMerchant(@PathVariable Integer id) {
         log.info("删除供应商信息：id={}", id);
-        boolean success = merchantService.deleteMerchant(id);
-        return success ? Result.success() : Result.error("供应商删除失败");
+        merchantService.deleteMerchant(id);
+        return Result.success();
     }
 }
