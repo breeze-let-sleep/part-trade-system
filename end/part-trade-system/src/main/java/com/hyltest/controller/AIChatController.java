@@ -1,5 +1,7 @@
 package com.hyltest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +23,14 @@ public class AIChatController {
 
     private final ChatClient serviceChatClient;
 
-    @Tag(name = "ai对话接口",description = "获取用户输入并通过流式返回ai响应结果")
+    @Operation(summary = "AI对话", description = "获取用户输入并通过流式返回ai响应结果")
     @GetMapping(value = "/chat", produces = "text/html;charset=utf-8")
     public Flux<String> service(
+            @Parameter(description = "用户输入的问题", example = "你好，请介绍一下零件交易流程")
             @RequestParam String prompt,
+            @Parameter(description = "会话id", example = "chat-1")
             @RequestParam String chatId,
+            @Parameter(description = "当前用户id", example = "200001")
             @RequestParam Integer curId) {
         log.info("用户输入：{}；会话id：{}；用户id：{}",prompt,chatId,curId);
         StringBuilder message = new StringBuilder();

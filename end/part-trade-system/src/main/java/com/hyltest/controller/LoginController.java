@@ -32,7 +32,7 @@ public class LoginController {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Operation(summary = "用户登录")
+    @Operation(summary = "用户登录",description = "用户登录，校验成功后返回JWT令牌")
     @PostMapping("/login")
     public Result login(@RequestBody UserVO userVO){
         log.info("用户登录：{}",userVO);
@@ -43,7 +43,7 @@ public class LoginController {
         return Result.success(msg);
     }
 
-    @Operation(summary = "用户注册")
+    @Operation(summary = "用户注册",description = "用户注册，校验验证码通过后完成注册")
     @PostMapping("/register")
     public Result register(@RequestBody UserVO userVO){
         log.info("用户注册：{}",userVO);

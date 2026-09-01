@@ -7,6 +7,7 @@ import com.hyltest.pojo.Result;
 import com.hyltest.pojo.entity.Customer;
 import com.hyltest.service.ICustomerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,10 @@ public class CustomerController {
      */
     @Operation(summary = "获取单个顾客信息",description = "根据id获取顾客信息")
     @GetMapping("/getInfo/{id}")
-    public Result getCustomerInfo(@PathVariable Integer id) {
+    public Result getCustomerInfo(
+            @Parameter(description = "顾客的id", example = "200001")
+            @PathVariable Integer id
+    ) {
         log.info("获取顾客信息：id={}", id);
         Customer customer = customerService.getCustomerInfo(id);
         return Result.success(customer);
@@ -43,7 +47,9 @@ public class CustomerController {
      */
     @Operation(summary = "分页请求顾客列表",description = "分页获取顾客列表")
     @GetMapping("/getCustomers")
-    public Result getCustomerPage(Integer currentPage, Integer pageSize) {
+    public Result getCustomerPage(
+            @Parameter(description = "当前页", example = "1") Integer currentPage,
+            @Parameter(description = "每页大小", example = "7") Integer pageSize) {
         log.info("分页获取顾客列表：currentPage={}, pageSize={}", currentPage, pageSize);
         PageResult pageResult = customerService.getCustomerPage(currentPage, pageSize);
         return Result.success(pageResult);
@@ -79,7 +85,10 @@ public class CustomerController {
     @Operation(summary = "删除顾客信息",description = "删除顾客信息")
     @AdminLog
     @DeleteMapping("/deleteCustomer/{id}")
-    public Result deleteCustomer(@PathVariable Integer id) {
+    public Result deleteCustomer(
+            @Parameter(description = "顾客的id", example = "200001")
+            @PathVariable Integer id
+    ) {
         log.info("删除顾客：id={}", id);
         int result = customerService.deleteCustomer(id);
         return result > 0 ? Result.success() : Result.error("删除失败");
@@ -91,10 +100,14 @@ public class CustomerController {
     @Operation(summary = "模糊查询顾客列表",description = "模糊查询顾客列表")
     @GetMapping("/likeCustomers")
     public Result likeCustomer(
+            @Parameter(description = "模糊匹配的顾客名称", example = "小明")
             @RequestParam(required = false) String likeName,
+            @Parameter(description = "模糊匹配的顾客地址", example = "海淀")
             @RequestParam(required = false) String likeAddress,
+            @Parameter(description = "开始时间，格式：yyyy-MM-dd HH:mm:ss", example = "2025-11-01 00:00:00")
             @RequestParam(required = false)
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
+            @Parameter(description = "结束时间，格式：yyyy-MM-dd HH:mm:ss", example = "2025-11-30 23:59:59")
             @RequestParam(required = false)
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime
     ) {

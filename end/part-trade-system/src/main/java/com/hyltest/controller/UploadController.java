@@ -6,6 +6,7 @@ import com.hyltest.exception.UnknownException;
 import com.hyltest.pojo.Result;
 import com.hyltest.utils.AliyunOSSOperator;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,8 @@ public class UploadController {
      */
     @Operation(summary = "上传图片到阿里云",description = "上传图片到阿里云，返回文件路径")
     @PostMapping("/upload")
-    public Result upload(MultipartFile file) throws Exception {
+    public Result upload(
+            @Parameter(description = "要上传的图片文件") MultipartFile file) throws Exception {
         log.info("文件上传：{}",file.getOriginalFilename());
         //将文件交给阿里云上传工具类进行处理->引入工具类实例
         String url= null;

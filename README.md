@@ -163,6 +163,12 @@
 
 4. 打开 `PartTradeSystemApplication.java` 文件，启动项目即可
 
+## 接口文档地址
+
+接口测试文档[ http://localhost:8080/doc.html](http://localhost:8080/doc.html)
+
+
+
 
 # 项目部分运行截图
 ![登录页面](./imgs/login.png)

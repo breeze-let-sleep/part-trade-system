@@ -18,7 +18,7 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @Operation(summary = "获取报表数据")
+    @Operation(summary = "获取报表数据",description = "获取系统报表数据，包括统计数据和图表数据")
     @GetMapping("/report")
     public Result getReport(){
         return Result.success(reportService.getReport());

@@ -57,13 +57,16 @@ public class Knife4jOpenApiCustomizer extends com.github.xiaoymin.knife4j.spring
 
     private void addOrderExtension(OpenAPI openApi) {
         /**
-         * 修复
+         * 修复开始
          */
         if (properties.getGroupConfigs() == null || properties.getGroupConfigs().isEmpty()) {
             return;
         }
+        //核心修复
         Collection<SpringDocConfigProperties.GroupConfig> groupConfigs = properties.getGroupConfigs().stream().toList();
-        
+        /**
+         * 结束修复
+         */
         Set<String> packagesToScan = groupConfigs.stream()
                 .map(SpringDocConfigProperties.GroupConfig::getPackagesToScan)
                 .filter(toScan -> !CollectionUtils.isEmpty(toScan))

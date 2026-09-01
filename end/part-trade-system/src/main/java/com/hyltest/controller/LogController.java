@@ -5,6 +5,7 @@ import com.hyltest.pojo.PageResult;
 import com.hyltest.pojo.Result;
 import com.hyltest.service.IOperateLogService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogController {
     private final IOperateLogService operateLogService;
 
-    @Operation(summary = "获取操作日志列表")
+    @Operation(summary = "获取操作日志列表",description = "分页获取管理员敏感操作日志列表")
     @GetMapping("/getLogs")
-    public Result getLogs(Integer currentPage, Integer pageSize) {
+    public Result getLogs(
+            @Parameter(description = "当前页", example = "1") Integer currentPage,
+            @Parameter(description = "每页大小", example = "7") Integer pageSize) {
         log.info("获取操作日志列表");
         PageResult pageResult = operateLogService.getLogs(currentPage, pageSize);
         log.info("操作日志列表：{}", pageResult);

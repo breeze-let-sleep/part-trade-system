@@ -1,0 +1,2799 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "零件交易系统",
+    "description": "使用spring boot3+vue3搭建的单体项目",
+    "contact": {
+      "name": "迷迷糊糊睡着了",
+      "email": "test@demo.com"
+    },
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "商品接口",
+      "description": "用于获取商品信息"
+    },
+    {
+      "name": "操作日志接口",
+      "description": "用于获取管理员敏感操作日志的接口"
+    },
+    {
+      "name": "管理员接口",
+      "description": "用于获取和管理普通管理员的接口，属于系统管理员才有的权限"
+    },
+    {
+      "name": "用户登录相关接口",
+      "description": "用户登录相关接口，包括登录、注册与获取验证码"
+    },
+    {
+      "name": "顾客接口",
+      "description": "用于获取和管理顾客信息"
+    },
+    {
+      "name": "ai对话接口",
+      "description": "获取用户输入并通过流式返回ai响应结果"
+    },
+    {
+      "name": "供应商接口",
+      "description": "供应商接口"
+    },
+    {
+      "name": "合同接口",
+      "description": "用于获取和操作合同接口"
+    },
+    {
+      "name": "收藏接口",
+      "description": "用于获取收藏供应商的接口"
+    }
+  ],
+  "paths": {
+    "/parts/updatePart": {
+      "put": {
+        "tags": [
+          "零件接口"
+        ],
+        "summary": "修改零件信息",
+        "description": "修改零件信息，修改成功后返回成功提示",
+        "operationId": "updatePart",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Part"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/parts/publishPart/{id}/{isPublish}": {
+      "put": {
+        "tags": [
+          "零件接口"
+        ],
+        "summary": "修改零件上线信息",
+        "description": "根据商品id修改零件的发布上线状态",
+        "operationId": "publishPart",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "商品id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "isPublish",
+            "in": "path",
+            "description": "是否发布上线（0:否;1:是）",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/orders/payOrder/{orderId}": {
+      "put": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "支付订单",
+        "description": "根据订单id支付订单",
+        "operationId": "payOrder",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "订单id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/merchants/updateMerchant": {
+      "put": {
+        "tags": [
+          "供应商接口"
+        ],
+        "summary": "修改供应商信息",
+        "description": "修改供应商信息，修改成功后返回成功提示",
+        "operationId": "updateMerchant",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Merchant"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/details/evaluateOrder": {
+      "put": {
+        "tags": [
+          "订单详情接口"
+        ],
+        "summary": "收货并评价订单",
+        "description": "确认收货并对订单进行星级评价",
+        "operationId": "evaluateOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderDetail"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/details/deliver/{id}": {
+      "put": {
+        "tags": [
+          "订单详情接口"
+        ],
+        "summary": "发货",
+        "description": "根据订单详情id对订单进行发货",
+        "operationId": "deliver",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "订单详情id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/customers/updateCustomer": {
+      "put": {
+        "tags": [
+          "顾客接口"
+        ],
+        "summary": "修改顾客信息",
+        "description": "修改顾客信息",
+        "operationId": "updateCustomer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Customer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/contracts/signature": {
+      "put": {
+        "tags": [
+          "合同接口"
+        ],
+        "summary": "签名订单",
+        "description": "根据订单id和签名值进行签名",
+        "operationId": "signature",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "query",
+            "description": "订单id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "description": "签名值",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "供应商小明"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/admins/updateAdmin": {
+      "put": {
+        "tags": [
+          "管理员接口"
+        ],
+        "summary": "修改管理员信息",
+        "description": "修改管理员信息，并返回修改后的管理员信息",
+        "operationId": "updateAdmin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Admin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/upload": {
+      "post": {
+        "tags": [
+          "图片上传接口"
+        ],
+        "summary": "上传图片到阿里云",
+        "description": "上传图片到阿里云，返回文件路径",
+        "operationId": "upload",
+        "parameters": [
+          {
+            "name": "file",
+            "in": "query",
+            "description": "要上传的图片文件",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": [
+          "用户登录相关接口"
+        ],
+        "summary": "用户注册",
+        "description": "用户注册，校验验证码通过后完成注册",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserVO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parts/addPart": {
+      "post": {
+        "tags": [
+          "零件接口"
+        ],
+        "summary": "新增零件信息",
+        "description": "新增零件信息，新增成功后返回成功提示",
+        "operationId": "addPart",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Part"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/orders/addOrder": {
+      "post": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "购买零件",
+        "description": "根据订单信息下单购买零件",
+        "operationId": "addOrder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/merchants/addMerchant": {
+      "post": {
+        "tags": [
+          "供应商接口"
+        ],
+        "summary": "新增供应商信息",
+        "description": "新增供应商信息，新增成功后返回成功提示",
+        "operationId": "addMerchant",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Merchant"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "用户登录相关接口"
+        ],
+        "summary": "用户登录",
+        "description": "用户登录，校验成功后返回JWT令牌",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserVO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/addCustomer": {
+      "post": {
+        "tags": [
+          "顾客接口"
+        ],
+        "summary": "新增顾客信息",
+        "description": "新增顾客信息",
+        "operationId": "addCustomer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Customer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/collects/addCollect/{customerId}/{merchantId}": {
+      "post": {
+        "tags": [
+          "收藏接口"
+        ],
+        "summary": "添加供应商为收藏",
+        "description": "根据顾客id和供应商id添加收藏记录",
+        "operationId": "addCollect",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "顾客id，以2开头，共6位",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 200001
+          },
+          {
+            "name": "merchantId",
+            "in": "path",
+            "description": "供应商id，以1开头，共6位",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 100001
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/admins/addAdmin": {
+      "post": {
+        "tags": [
+          "管理员接口"
+        ],
+        "summary": "新增管理员信息",
+        "description": "新增管理员信息，新增成功后返回成功提示",
+        "operationId": "addAdmin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Admin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/report": {
+      "get": {
+        "tags": [
+          "报表接口"
+        ],
+        "summary": "获取报表数据",
+        "description": "获取系统报表数据，包括统计数据和图表数据",
+        "operationId": "getReport",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/parts/likeParts": {
+      "get": {
+        "tags": [
+          "零件接口"
+        ],
+        "summary": "模糊查询零件",
+        "description": "根据零件id、名称、重量、颜色、时间范围等条件模糊查询零件列表",
+        "operationId": "likePart",
+        "parameters": [
+          {
+            "name": "partId",
+            "in": "query",
+            "description": "零件id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "partName",
+            "in": "query",
+            "description": "零件名称",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "螺丝"
+          },
+          {
+            "name": "weight",
+            "in": "query",
+            "description": "重量，单位kg",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            },
+            "example": 5.5
+          },
+          {
+            "name": "color",
+            "in": "query",
+            "description": "颜色（1:红;2:黄;3:绿;4:蓝;5:白;6:黑;）",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "开始时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-01 00:00:00"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "结束时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-30 23:59:59"
+          },
+          {
+            "name": "isPublish",
+            "in": "query",
+            "description": "是否发布上线（0:否;1:是）",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/parts/getParts": {
+      "get": {
+        "tags": [
+          "零件接口"
+        ],
+        "summary": "分页获取零件列表",
+        "description": "分页获取零件列表，返回零件信息列表",
+        "operationId": "getPartPage",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/orders/getPaidMessage": {
+      "get": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "获取待支付订单信息",
+        "description": "分页获取当前用户待支付的订单信息",
+        "operationId": "getPaidMessage",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页，默认为1",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小，默认为10",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/orders/getEndLikeOrders": {
+      "get": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "模糊查看已完成的所有订单",
+        "description": "根据零件名称、星级、时间范围等条件模糊查询已完成的订单列表，支持分页",
+        "operationId": "getEndLikeOrders",
+        "parameters": [
+          {
+            "name": "partName",
+            "in": "query",
+            "description": "零件名称",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "六角螺丝"
+          },
+          {
+            "name": "orderId",
+            "in": "query",
+            "description": "订单id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "star",
+            "in": "query",
+            "description": "星级评价（1~5星）",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 5
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "开始时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-01 00:00:00"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "结束时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-30 23:59:59"
+          },
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页，默认为1",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小，默认为7",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 7
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/merchants/likeMerchants": {
+      "get": {
+        "tags": [
+          "供应商接口"
+        ],
+        "summary": "模糊查询供应商列表",
+        "description": "根据名称、地址、时间范围等条件模糊查询供应商列表",
+        "operationId": "searchMerchants",
+        "parameters": [
+          {
+            "name": "likeName",
+            "in": "query",
+            "description": "模糊匹配的供应商名称",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "小明"
+          },
+          {
+            "name": "likeAddress",
+            "in": "query",
+            "description": "模糊匹配的供应商地址",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "海淀"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "开始时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-01 00:00:00"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "结束时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-30 23:59:59"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/merchants/getMerchants": {
+      "get": {
+        "tags": [
+          "供应商接口"
+        ],
+        "summary": "分页获取供应商列表",
+        "description": "分页获取供应商信息列表",
+        "operationId": "getMerchantList",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页，默认为1",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小，默认为7",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 7
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/merchants/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "供应商接口"
+        ],
+        "summary": "获取单个供应商信息",
+        "description": "根据id获取供应商详细信息",
+        "operationId": "getMerchantById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "供应商的id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 100001
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/logs/getLogs": {
+      "get": {
+        "tags": [
+          "操作日志接口"
+        ],
+        "summary": "获取操作日志列表",
+        "description": "分页获取管理员敏感操作日志列表",
+        "operationId": "getLogs",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/goods/likeGoods": {
+      "get": {
+        "tags": [
+          "商品接口"
+        ],
+        "summary": "模糊查询商品",
+        "description": "模糊查询商品信息",
+        "operationId": "likeGoods",
+        "parameters": [
+          {
+            "name": "inputMerchant",
+            "in": "query",
+            "description": "模糊匹配的供应商名称",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "小明"
+          },
+          {
+            "name": "inputPart",
+            "in": "query",
+            "description": "模糊匹配的零件名称",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "螺丝"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/goods/getGoods": {
+      "get": {
+        "tags": [
+          "商品接口"
+        ],
+        "summary": "分页获取商品",
+        "description": "分页获取商品信息，从cursor开始返回指定数量的商品信息",
+        "operationId": "getGoods",
+        "parameters": [
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "游标：最后一条商品的id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 0
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "返回的记录数",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/details/getProcessingOrders": {
+      "get": {
+        "tags": [
+          "订单详情接口"
+        ],
+        "summary": "分页获取当前用户处理中的订单",
+        "description": "分页获取当前用户处理中的订单列表",
+        "operationId": "getProcessingOrders",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/details/getEndOrders": {
+      "get": {
+        "tags": [
+          "订单详情接口"
+        ],
+        "summary": "分页获取当前用户已经结束的订单",
+        "description": "分页获取当前用户已经结束的订单列表",
+        "operationId": "getEndOrders",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/customers/likeCustomers": {
+      "get": {
+        "tags": [
+          "顾客接口"
+        ],
+        "summary": "模糊查询顾客列表",
+        "description": "模糊查询顾客列表",
+        "operationId": "likeCustomer",
+        "parameters": [
+          {
+            "name": "likeName",
+            "in": "query",
+            "description": "模糊匹配的顾客名称",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "小明"
+          },
+          {
+            "name": "likeAddress",
+            "in": "query",
+            "description": "模糊匹配的顾客地址",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "海淀"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "开始时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-01 00:00:00"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "结束时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-30 23:59:59"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/customers/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "顾客接口"
+        ],
+        "summary": "获取单个顾客信息",
+        "description": "根据id获取顾客信息",
+        "operationId": "getCustomerInfo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "顾客的id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 200001
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/customers/getCustomers": {
+      "get": {
+        "tags": [
+          "顾客接口"
+        ],
+        "summary": "分页请求顾客列表",
+        "description": "分页获取顾客列表",
+        "operationId": "getCustomerPage",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/contracts/getOrders": {
+      "get": {
+        "tags": [
+          "合同接口"
+        ],
+        "summary": "分页获取当前用户未签名订单",
+        "description": "分页获取当前用户未签名的订单列表",
+        "operationId": "getOrders",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/contracts/getOrderDetail/{orderId}": {
+      "get": {
+        "tags": [
+          "合同接口"
+        ],
+        "summary": "查询订单详情",
+        "description": "根据订单id查询订单详情",
+        "operationId": "getOrderDetail",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "订单id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/collects/likeCollects": {
+      "get": {
+        "tags": [
+          "收藏接口"
+        ],
+        "summary": "模糊查询已收藏的供应商",
+        "description": "根据供应商名称模糊查询已收藏的供应商列表，支持分页",
+        "operationId": "likeCollects",
+        "parameters": [
+          {
+            "name": "inputMerchant",
+            "in": "query",
+            "description": "模糊匹配的供应商名称",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "小明"
+          },
+          {
+            "name": "customerId",
+            "in": "query",
+            "description": "顾客id",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 200001
+          },
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页，默认为1",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小，默认为10",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/collects/getCollects": {
+      "get": {
+        "tags": [
+          "收藏接口"
+        ],
+        "summary": "分页请求收藏的供应商列表",
+        "description": "分页获取已收藏的供应商列表",
+        "operationId": "getCollects",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/code": {
+      "get": {
+        "tags": [
+          "用户登录相关接口"
+        ],
+        "summary": "获取验证码",
+        "description": "获取验证码，有效期5分钟",
+        "operationId": "getCode",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/chat": {
+      "get": {
+        "tags": [
+          "ai对话接口"
+        ],
+        "summary": "AI对话",
+        "description": "获取用户输入并通过流式返回ai响应结果",
+        "operationId": "service",
+        "parameters": [
+          {
+            "name": "prompt",
+            "in": "query",
+            "description": "用户输入的问题",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "你好，请介绍一下零件交易流程"
+          },
+          {
+            "name": "chatId",
+            "in": "query",
+            "description": "会话id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "chat-1"
+          },
+          {
+            "name": "curId",
+            "in": "query",
+            "description": "当前用户id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 200001
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/html;charset=utf-8": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/admins/likeAdmins": {
+      "get": {
+        "tags": [
+          "管理员接口"
+        ],
+        "summary": "模糊查询管理员",
+        "description": "模糊查询管理员列表",
+        "operationId": "searchAdmins",
+        "parameters": [
+          {
+            "name": "input",
+            "in": "query",
+            "description": "模糊查询的输入",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "小明"
+          },
+          {
+            "name": "startTime",
+            "in": "query",
+            "description": "开始时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-01 00:00:00"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "description": "结束时间，格式：yyyy-MM-dd HH:mm:ss",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2025-11-30 23:59:59"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/admins/getInfo/{id}": {
+      "get": {
+        "tags": [
+          "管理员接口"
+        ],
+        "summary": "获取单个管理员信息",
+        "description": "根据id获取管理员详细信息",
+        "operationId": "getAdminById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "管理员的id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": "000001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/admins/getAdmins": {
+      "get": {
+        "tags": [
+          "管理员接口"
+        ],
+        "summary": "分页获取管理员列表",
+        "description": "分页获取管理员详细信息列表",
+        "operationId": "getAdminList",
+        "parameters": [
+          {
+            "name": "currentPage",
+            "in": "query",
+            "description": "当前页，默认为1",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            },
+            "example": 1
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页大小，默认为7",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 7
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/parts/deletePart/{id}": {
+      "delete": {
+        "tags": [
+          "零件接口"
+        ],
+        "summary": "删除零件信息",
+        "description": "根据零件id删除零件信息",
+        "operationId": "deletePart",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "零件id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/orders/removeOrder/{orderId}": {
+      "delete": {
+        "tags": [
+          "订单管理"
+        ],
+        "summary": "删除订单",
+        "description": "根据订单id删除订单",
+        "operationId": "removeOrder",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "订单id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/merchants/deleteMerchant/{id}": {
+      "delete": {
+        "tags": [
+          "供应商接口"
+        ],
+        "summary": "删除供应商信息",
+        "description": "根据id删除供应商信息",
+        "operationId": "deleteMerchant",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "供应商的id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 100001
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/customers/deleteCustomer/{id}": {
+      "delete": {
+        "tags": [
+          "顾客接口"
+        ],
+        "summary": "删除顾客信息",
+        "description": "删除顾客信息",
+        "operationId": "deleteCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "顾客的id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 200001
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/collects/removeCollect/{customerId}/{merchantId}": {
+      "delete": {
+        "tags": [
+          "收藏接口"
+        ],
+        "summary": "取消收藏",
+        "description": "根据顾客id和供应商id取消收藏记录",
+        "operationId": "removeCollect",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "顾客id，以2开头，共6位",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 200001
+          },
+          {
+            "name": "merchantId",
+            "in": "path",
+            "description": "供应商id，以1开头，共6位",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 100001
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    },
+    "/admins/deleteAdmin/{id}": {
+      "delete": {
+        "tags": [
+          "管理员接口"
+        ],
+        "summary": "删除管理员信息",
+        "description": "根据id删除管理员信息",
+        "operationId": "deleteAdmin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "管理员的id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": "000001"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Authorization": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Part": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "id",
+            "format": "int32",
+            "example": 1,
+            "refType": null
+          },
+          "merchantId": {
+            "type": "integer",
+            "description": "供应商id",
+            "format": "int32",
+            "example": 100001,
+            "refType": null
+          },
+          "name": {
+            "type": "string",
+            "description": "名称",
+            "example": "六角螺丝",
+            "refType": null
+          },
+          "color": {
+            "type": "integer",
+            "description": "颜色（1:红;2:黄;3:绿;4:蓝;5:白;6:黑;）",
+            "format": "int32",
+            "example": 1,
+            "refType": null
+          },
+          "weight": {
+            "type": "number",
+            "description": "重量，单位kg",
+            "format": "double",
+            "example": 5.5,
+            "refType": null
+          },
+          "description": {
+            "type": "string",
+            "description": "描述",
+            "example": "不锈钢材质，物美价廉",
+            "refType": null
+          },
+          "inventory": {
+            "type": "integer",
+            "description": "库存，单位个",
+            "format": "int32",
+            "example": 100,
+            "refType": null
+          },
+          "singlePrice": {
+            "type": "integer",
+            "description": "单价，单位元",
+            "format": "int32",
+            "example": 50,
+            "refType": null
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time",
+            "refType": null
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "修改时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time",
+            "refType": null
+          }
+        },
+        "description": "零件表"
+      },
+      "Result": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "编码：1成功，0为失败",
+            "format": "int32",
+            "example": 1
+          },
+          "msg": {
+            "type": "string",
+            "description": "提示信息",
+            "example": "success"
+          },
+          "data": {
+            "type": "object",
+            "description": "响应数据",
+            "example": "{...}"
+          }
+        },
+        "description": "后端统一返回结果"
+      },
+      "Merchant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "id，以1开头，共6位",
+            "format": "int32",
+            "example": 100001
+          },
+          "name": {
+            "type": "string",
+            "description": "供应商名字",
+            "example": "供应商小明"
+          },
+          "password": {
+            "type": "string",
+            "description": "密码（MD5加密后密文）",
+            "example": "1234"
+          },
+          "phone": {
+            "type": "string",
+            "description": "电话号码",
+            "example": "13800138000"
+          },
+          "address": {
+            "type": "string",
+            "description": "地址",
+            "example": "北京市海淀区中关村大街1号"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "头像地址",
+            "example": "https://part-trade.oss-cn-hangzhou.aliyuncs.com/avatar.jpg"
+          },
+          "description": {
+            "type": "string",
+            "description": "公司简介",
+            "example": "公司成立于2020年，专营各类零件销售"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "修改时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time"
+          }
+        },
+        "description": "供应商表"
+      },
+      "OrderDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "订单流程id",
+            "format": "int32",
+            "example": 1
+          },
+          "orderId": {
+            "type": "integer",
+            "description": "订单id",
+            "format": "int32",
+            "example": 1
+          },
+          "isDeliver": {
+            "type": "integer",
+            "description": "是否发货（0：未发货；1：已发货-运输中）",
+            "format": "int32",
+            "example": 0
+          },
+          "isTake": {
+            "type": "integer",
+            "description": "是否收到货物（0：未收到；1：已收到）",
+            "format": "int32",
+            "example": 0
+          },
+          "star": {
+            "type": "integer",
+            "description": "星级评价（1~5星）",
+            "format": "int32",
+            "example": 5
+          },
+          "evaluate": {
+            "type": "string",
+            "description": "评价内容",
+            "example": "物美价廉，物流很快"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "修改时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time"
+          }
+        },
+        "description": "订单详情表"
+      },
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "id，以2开头，共6位",
+            "format": "int32",
+            "example": 200001,
+            "refType": null
+          },
+          "name": {
+            "type": "string",
+            "description": "顾客名字",
+            "example": "顾客小明",
+            "refType": null
+          },
+          "password": {
+            "type": "string",
+            "description": "密码（MD5加密后密文）",
+            "example": "1234",
+            "refType": null
+          },
+          "phone": {
+            "type": "string",
+            "description": "电话号码",
+            "example": "13800138000",
+            "refType": null
+          },
+          "address": {
+            "type": "string",
+            "description": "地址",
+            "example": "北京市海淀区中关村大街1号",
+            "refType": null
+          },
+          "avatar": {
+            "type": "string",
+            "description": "头像地址",
+            "example": "https://part-trade.oss-cn-hangzhou.aliyuncs.com/avatar.jpg",
+            "refType": null
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time",
+            "refType": null
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "修改时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time",
+            "refType": null
+          }
+        },
+        "description": "顾客表"
+      },
+      "Admin": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "id，以0开头，共6位",
+            "format": "int32",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "管理员名字",
+            "example": "管理员小明"
+          },
+          "password": {
+            "type": "string",
+            "description": "密码（MD5加密后密文）",
+            "example": "1234"
+          },
+          "phone": {
+            "type": "string",
+            "description": "电话号码",
+            "example": "13800138000"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "头像的地址",
+            "example": "https://part-trade.oss-cn-hangzhou.aliyuncs.com/avatar.jpg"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "修改时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time"
+          }
+        },
+        "description": "管理员表"
+      },
+      "UserVO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "用户名",
+            "example": "小明"
+          },
+          "phone": {
+            "type": "string",
+            "description": "电话号码",
+            "example": "13800138000"
+          },
+          "password": {
+            "type": "string",
+            "description": "密码",
+            "example": "1234"
+          },
+          "role": {
+            "type": "integer",
+            "description": "角色",
+            "format": "int32",
+            "example": 2
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "example": "2025-11-21 12:00:00"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "修改时间",
+            "example": "2025-11-22 15:30:00"
+          },
+          "code": {
+            "type": "string",
+            "description": "验证码",
+            "example": "123456"
+          }
+        },
+        "description": "登录或注册时的用户数据"
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "订单id",
+            "format": "int32",
+            "example": 1,
+            "refType": null
+          },
+          "merchantId": {
+            "type": "integer",
+            "description": "供应商id，以1开头，共6位",
+            "format": "int32",
+            "example": 100001,
+            "refType": null
+          },
+          "customerId": {
+            "type": "integer",
+            "description": "顾客id，以2开头，共6位",
+            "format": "int32",
+            "example": 200001,
+            "refType": null
+          },
+          "partId": {
+            "type": "integer",
+            "description": "零件id",
+            "format": "int32",
+            "example": 1,
+            "refType": null
+          },
+          "amount": {
+            "type": "integer",
+            "description": "交易数量，单位：个",
+            "format": "int32",
+            "example": 10,
+            "refType": null
+          },
+          "totalPrice": {
+            "type": "integer",
+            "description": "交易金额，单位：元",
+            "format": "int32",
+            "example": 500,
+            "refType": null
+          },
+          "isSuccess": {
+            "type": "integer",
+            "description": "是否成功（0：不成功；1：已签名，成功）",
+            "format": "int32",
+            "example": 0,
+            "refType": null
+          },
+          "isPaid": {
+            "type": "integer",
+            "description": "顾客是否付款（0：未付；1：已付）",
+            "format": "int32",
+            "example": 0,
+            "refType": null
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间(YYYY-MM-DD HH:MM:SS)",
+            "format": "date-time",
+            "refType": null
+          }
+        },
+        "description": "订单表"
+      }
+    },
+    "securitySchemes": {
+      "Authorization": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "x-openapi": {
+    "x-setting": null,
+    "x-markdownFiles": []
+  }
+}
