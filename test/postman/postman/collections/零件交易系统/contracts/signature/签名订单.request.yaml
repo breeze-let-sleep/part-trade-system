@@ -1,0 +1,20 @@
+$kind: http-request
+description: 根据订单id和签名值进行签名
+url: "{{baseUrl}}/contracts/signature?orderId=1&value=供应商小明"
+method: PUT
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: orderId
+    value: "1"
+    description: 订单id
+  - key: value
+    value: 供应商小明
+    description: 签名值
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/签名订单.resources/examples
+order: 1000

@@ -1,0 +1,41 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/parts/addPart"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: "*/*"
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: json
+    content: |-
+      {
+        "id": 1,
+        "merchantId": 100001,
+        "name": "六角螺丝",
+        "color": 1,
+        "weight": 5.5,
+        "description": "不锈钢材质，物美价廉",
+        "inventory": 100,
+        "singlePrice": 50,
+        "createTime": "1960-02-27T15:11:22.885Z",
+        "updateTime": "1972-07-09T04:21:01.324Z"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: "*/*"
+  body:
+    type: text
+    content: |-
+      {
+        "code": 1,
+        "msg": "success",
+        "data": {}
+      }
+order: 1000

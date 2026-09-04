@@ -1,0 +1,19 @@
+$kind: http-request
+name: 用户登录
+description: 用户登录，校验成功后返回JWT令牌
+url: "{{baseUrl}}/login"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: "*/*"
+body:
+  type: json
+  content: |-
+    {
+      "name": "顾客小明",
+      "password": "1234",
+      "role": 2
+    }
+settings: {}
+examples: ./.resources/用户登录.resources/examples
+order: 1000

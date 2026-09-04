@@ -1,0 +1,17 @@
+$kind: http-request
+description: 根据订单详情id对订单进行发货
+url: "{{baseUrl}}/details/deliver/:id"
+method: PUT
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: id
+    value: "1"
+    description: 订单详情id
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/发货.resources/examples
+order: 1000

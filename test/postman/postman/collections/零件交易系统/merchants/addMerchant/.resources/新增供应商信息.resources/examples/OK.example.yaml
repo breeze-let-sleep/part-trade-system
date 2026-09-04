@@ -1,0 +1,40 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/merchants/addMerchant"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: "*/*"
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: json
+    content: |-
+      {
+        "id": 100001,
+        "name": "供应商小明",
+        "password": "1234",
+        "phone": "13800138000",
+        "address": "北京市海淀区中关村大街1号",
+        "avatar": "https://part-trade.oss-cn-hangzhou.aliyuncs.com/avatar.jpg",
+        "description": "公司成立于2020年，专营各类零件销售",
+        "createTime": "1955-02-17T22:42:14.590Z",
+        "updateTime": "1999-01-08T05:10:53.115Z"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: "*/*"
+  body:
+    type: text
+    content: |-
+      {
+        "code": 1,
+        "msg": "success",
+        "data": {}
+      }
+order: 1000

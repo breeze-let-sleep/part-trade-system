@@ -1,0 +1,17 @@
+$kind: http-request
+description: 删除顾客信息
+url: "{{baseUrl}}/customers/deleteCustomer/:id"
+method: DELETE
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: id
+    value: "200001"
+    description: 顾客的id
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/删除顾客信息.resources/examples
+order: 1000

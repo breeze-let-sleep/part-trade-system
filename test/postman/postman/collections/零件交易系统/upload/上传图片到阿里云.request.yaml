@@ -1,0 +1,13 @@
+$kind: http-request
+description: 上传图片到阿里云，返回文件路径
+url: "{{baseUrl}}/upload?file=string"
+method: POST
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: file
+    value: string
+    description: 要上传的图片文件
+settings: {}
+examples: ./.resources/上传图片到阿里云.resources/examples
+order: 1000

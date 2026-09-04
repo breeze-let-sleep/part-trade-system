@@ -1,0 +1,29 @@
+$kind: http-request
+description: 修改零件信息，修改成功后返回成功提示
+url: "{{baseUrl}}/parts/updatePart"
+method: PUT
+headers:
+  Content-Type: application/json
+  Accept: "*/*"
+body:
+  type: json
+  content: |-
+    {
+      "id": 1,
+      "merchantId": 100001,
+      "name": "六角螺丝",
+      "color": 1,
+      "weight": 5.5,
+      "description": "不锈钢材质，物美价廉",
+      "inventory": 100,
+      "singlePrice": 50,
+      "createTime": "1960-02-27T15:11:22.885Z",
+      "updateTime": "1972-07-09T04:21:01.324Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/修改零件信息.resources/examples
+order: 1000

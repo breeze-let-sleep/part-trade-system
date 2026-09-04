@@ -1,0 +1,40 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/orders/addOrder"
+  method: POST
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: "*/*"
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: json
+    content: |-
+      {
+        "id": 1,
+        "merchantId": 100001,
+        "customerId": 200001,
+        "partId": 1,
+        "amount": 10,
+        "totalPrice": 500,
+        "isSuccess": 0,
+        "isPaid": 0,
+        "createTime": "2019-08-08T03:21:12.484Z"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: "*/*"
+  body:
+    type: text
+    content: |-
+      {
+        "code": 1,
+        "msg": "success",
+        "data": {}
+      }
+order: 1000

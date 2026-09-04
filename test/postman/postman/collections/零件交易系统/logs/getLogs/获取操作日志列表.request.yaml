@@ -1,0 +1,20 @@
+$kind: http-request
+description: 分页获取管理员敏感操作日志列表
+url: "{{baseUrl}}/logs/getLogs?currentPage=1&pageSize=7"
+method: GET
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: currentPage
+    value: "1"
+    description: 当前页
+  - key: pageSize
+    value: "7"
+    description: 每页大小
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/获取操作日志列表.resources/examples
+order: 1000

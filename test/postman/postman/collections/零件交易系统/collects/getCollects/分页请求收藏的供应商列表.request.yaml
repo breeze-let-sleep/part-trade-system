@@ -1,0 +1,20 @@
+$kind: http-request
+description: 分页获取已收藏的供应商列表
+url: "{{baseUrl}}/collects/getCollects?currentPage=1&pageSize=10"
+method: GET
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: currentPage
+    value: "1"
+    description: 当前页
+  - key: pageSize
+    value: "10"
+    description: 每页大小
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/分页请求收藏的供应商列表.resources/examples
+order: 1000

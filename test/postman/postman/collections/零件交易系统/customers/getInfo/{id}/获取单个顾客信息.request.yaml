@@ -1,0 +1,17 @@
+$kind: http-request
+description: 根据id获取顾客信息
+url: "{{baseUrl}}/customers/getInfo/:id"
+method: GET
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: id
+    value: "200001"
+    description: 顾客的id
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/获取单个顾客信息.resources/examples
+order: 1000

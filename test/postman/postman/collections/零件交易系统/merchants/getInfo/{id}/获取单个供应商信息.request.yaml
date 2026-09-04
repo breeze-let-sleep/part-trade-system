@@ -1,0 +1,17 @@
+$kind: http-request
+description: 根据id获取供应商详细信息
+url: "{{baseUrl}}/merchants/getInfo/:id"
+method: GET
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: id
+    value: "100001"
+    description: 供应商的id
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/获取单个供应商信息.resources/examples
+order: 1000

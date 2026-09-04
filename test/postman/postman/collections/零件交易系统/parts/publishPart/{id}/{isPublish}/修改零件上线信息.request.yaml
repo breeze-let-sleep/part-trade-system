@@ -1,0 +1,20 @@
+$kind: http-request
+description: 根据商品id修改零件的发布上线状态
+url: "{{baseUrl}}/parts/publishPart/:id/:isPublish"
+method: PUT
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: id
+    value: "1"
+    description: 商品id
+  - key: isPublish
+    value: "1"
+    description: 是否发布上线（0:否;1:是）
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/修改零件上线信息.resources/examples
+order: 1000

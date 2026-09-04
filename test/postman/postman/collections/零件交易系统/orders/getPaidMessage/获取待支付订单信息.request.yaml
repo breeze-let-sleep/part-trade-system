@@ -1,0 +1,20 @@
+$kind: http-request
+description: 分页获取当前用户待支付的订单信息
+url: "{{baseUrl}}/orders/getPaidMessage?currentPage=1&pageSize=10"
+method: GET
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: currentPage
+    value: "1"
+    description: 当前页，默认为1
+  - key: pageSize
+    value: "10"
+    description: 每页大小，默认为10
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/获取待支付订单信息.resources/examples
+order: 1000

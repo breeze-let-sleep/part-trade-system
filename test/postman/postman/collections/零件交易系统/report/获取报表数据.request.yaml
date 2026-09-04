@@ -1,0 +1,13 @@
+$kind: http-request
+description: 获取系统报表数据，包括统计数据和图表数据
+url: "{{baseUrl}}/report"
+method: GET
+headers:
+  Accept: "*/*"
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/获取报表数据.resources/examples
+order: 1000
