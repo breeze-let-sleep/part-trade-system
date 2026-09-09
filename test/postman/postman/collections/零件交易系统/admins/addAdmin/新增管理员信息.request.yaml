@@ -1,0 +1,26 @@
+$kind: http-request
+description: 新增管理员信息，新增成功后返回成功提示
+url: "{{baseUrl}}/admins/addAdmin"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: "*/*"
+body:
+  type: json
+  content: |-
+    {
+      "id": 1,
+      "name": "管理员小明",
+      "password": "1234",
+      "phone": "13800138000",
+      "avatar": "https://part-trade.oss-cn-hangzhou.aliyuncs.com/avatar.jpg",
+      "createTime": "1975-12-12T16:59:17.519Z",
+      "updateTime": "2011-11-10T12:32:48.315Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/新增管理员信息.resources/examples
+order: 1000

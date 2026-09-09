@@ -1,0 +1,27 @@
+$kind: http-request
+description: 新增顾客信息
+url: "{{baseUrl}}/customers/addCustomer"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: "*/*"
+body:
+  type: json
+  content: |-
+    {
+      "id": 200001,
+      "name": "顾客小明",
+      "password": "1234",
+      "phone": "13800138000",
+      "address": "北京市海淀区中关村大街1号",
+      "avatar": "https://part-trade.oss-cn-hangzhou.aliyuncs.com/avatar.jpg",
+      "createTime": "2015-10-30T23:08:59.385Z",
+      "updateTime": "2007-11-07T06:16:04.025Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/新增顾客信息.resources/examples
+order: 1000

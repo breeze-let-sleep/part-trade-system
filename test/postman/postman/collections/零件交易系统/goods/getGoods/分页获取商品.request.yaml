@@ -1,0 +1,20 @@
+$kind: http-request
+description: 分页获取商品信息，从cursor开始返回指定数量的商品信息
+url: "{{baseUrl}}/goods/getGoods?cursor=0&size=10"
+method: GET
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: cursor
+    value: "0"
+    description: 游标：最后一条商品的id
+  - key: size
+    value: "10"
+    description: 返回的记录数
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/分页获取商品.resources/examples
+order: 1000

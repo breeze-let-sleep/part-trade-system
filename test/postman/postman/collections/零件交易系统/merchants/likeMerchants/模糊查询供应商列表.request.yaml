@@ -1,0 +1,26 @@
+$kind: http-request
+description: 根据名称、地址、时间范围等条件模糊查询供应商列表
+url: "{{baseUrl}}/merchants/likeMerchants?likeName=小明&likeAddress=海淀&startTime=2025-11-01 00:00:00&endTime=2025-11-30 23:59:59"
+method: GET
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: likeName
+    value: 小明
+    description: 模糊匹配的供应商名称
+  - key: likeAddress
+    value: 海淀
+    description: 模糊匹配的供应商地址
+  - key: startTime
+    value: 2025-11-01 00:00:00
+    description: 开始时间，格式：yyyy-MM-dd HH:mm:ss
+  - key: endTime
+    value: 2025-11-30 23:59:59
+    description: 结束时间，格式：yyyy-MM-dd HH:mm:ss
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/模糊查询供应商列表.resources/examples
+order: 1000

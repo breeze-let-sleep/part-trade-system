@@ -1,0 +1,17 @@
+$kind: http-request
+description: 根据零件id删除零件信息
+url: "{{baseUrl}}/parts/deletePart/:id"
+method: DELETE
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: id
+    value: "1"
+    description: 零件id
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/删除零件信息.resources/examples
+order: 1000

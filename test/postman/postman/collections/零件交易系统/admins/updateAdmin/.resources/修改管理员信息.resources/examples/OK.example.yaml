@@ -1,0 +1,38 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/admins/updateAdmin"
+  method: PUT
+  headers:
+    - key: Content-Type
+      value: application/json
+    - key: Accept
+      value: "*/*"
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  body:
+    type: json
+    content: |-
+      {
+        "id": 1,
+        "name": "管理员小明",
+        "password": "1234",
+        "phone": "13800138000",
+        "avatar": "https://part-trade.oss-cn-hangzhou.aliyuncs.com/avatar.jpg",
+        "createTime": "1975-12-12T16:59:17.519Z",
+        "updateTime": "2011-11-10T12:32:48.315Z"
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: "*/*"
+  body:
+    type: text
+    content: |-
+      {
+        "code": 1,
+        "msg": "success",
+        "data": {}
+      }
+order: 1000

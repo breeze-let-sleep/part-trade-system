@@ -1,0 +1,17 @@
+$kind: http-request
+description: 根据订单id支付订单
+url: "{{baseUrl}}/orders/payOrder/:orderId"
+method: PUT
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: orderId
+    value: "1"
+    description: 订单id
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/支付订单.resources/examples
+order: 1000

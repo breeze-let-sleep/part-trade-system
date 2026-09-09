@@ -1,0 +1,26 @@
+$kind: http-request
+description: 根据供应商名称模糊查询已收藏的供应商列表，支持分页
+url: "{{baseUrl}}/collects/likeCollects?inputMerchant=小明&customerId=200001&currentPage=1&pageSize=10"
+method: GET
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: inputMerchant
+    value: 小明
+    description: 模糊匹配的供应商名称
+  - key: customerId
+    value: "200001"
+    description: 顾客id
+  - key: currentPage
+    value: "1"
+    description: 当前页，默认为1
+  - key: pageSize
+    value: "10"
+    description: 每页大小，默认为10
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/模糊查询已收藏的供应商.resources/examples
+order: 1000

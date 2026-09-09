@@ -1,0 +1,9 @@
+$kind: collection
+description: |-
+  使用spring boot3+vue3搭建的单体项目
+
+  Contact Support:
+   Name: 迷迷糊糊睡着了
+   Email: test@demo.com
+variables:
+  baseUrl: http://localhost:8080

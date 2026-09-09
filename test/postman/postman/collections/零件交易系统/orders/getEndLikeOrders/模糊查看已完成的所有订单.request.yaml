@@ -1,0 +1,35 @@
+$kind: http-request
+description: 根据零件名称、星级、时间范围等条件模糊查询已完成的订单列表，支持分页
+url: "{{baseUrl}}/orders/getEndLikeOrders?partName=六角螺丝&orderId=1&star=5&startTime=2025-11-01 00:00:00&endTime=2025-11-30 23:59:59&currentPage=1&pageSize=7"
+method: GET
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: partName
+    value: 六角螺丝
+    description: 零件名称
+  - key: orderId
+    value: "1"
+    description: 订单id
+  - key: star
+    value: "5"
+    description: 星级评价（1~5星）
+  - key: startTime
+    value: 2025-11-01 00:00:00
+    description: 开始时间，格式：yyyy-MM-dd HH:mm:ss
+  - key: endTime
+    value: 2025-11-30 23:59:59
+    description: 结束时间，格式：yyyy-MM-dd HH:mm:ss
+  - key: currentPage
+    value: "1"
+    description: 当前页，默认为1
+  - key: pageSize
+    value: "7"
+    description: 每页大小，默认为7
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/模糊查看已完成的所有订单.resources/examples
+order: 1000

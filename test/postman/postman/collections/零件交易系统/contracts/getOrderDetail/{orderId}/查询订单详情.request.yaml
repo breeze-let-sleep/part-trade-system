@@ -1,0 +1,17 @@
+$kind: http-request
+description: 根据订单id查询订单详情
+url: "{{baseUrl}}/contracts/getOrderDetail/:orderId"
+method: GET
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: orderId
+    value: "1"
+    description: 订单id
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/查询订单详情.resources/examples
+order: 1000

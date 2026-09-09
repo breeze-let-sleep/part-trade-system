@@ -1,0 +1,33 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/chat?prompt=你好，请介绍一下零件交易流程&chatId=chat-1&curId=200001"
+  method: GET
+  headers:
+    - key: Accept
+      value: text/html;charset=utf-8
+    - key: Authorization
+      value: Bearer <token>
+      description: "Added as a part of security scheme: bearer"
+  queryParams:
+    - key: prompt
+      value: 你好，请介绍一下零件交易流程
+      description: 用户输入的问题
+    - key: chatId
+      value: chat-1
+      description: 会话id
+    - key: curId
+      value: "200001"
+      description: 当前用户id
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: text/html;charset=utf-8
+  body:
+    type: text
+    content: |-
+      [
+        "string",
+        "string"
+      ]
+order: 1000

@@ -1,0 +1,20 @@
+$kind: http-request
+description: 根据顾客id和供应商id取消收藏记录
+url: "{{baseUrl}}/collects/removeCollect/:customerId/:merchantId"
+method: DELETE
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: customerId
+    value: "200001"
+    description: 顾客id，以2开头，共6位
+  - key: merchantId
+    value: "100001"
+    description: 供应商id，以1开头，共6位
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/取消收藏.resources/examples
+order: 1000

@@ -1,0 +1,20 @@
+$kind: http-request
+description: 根据顾客id和供应商id添加收藏记录
+url: "{{baseUrl}}/collects/addCollect/:customerId/:merchantId"
+method: POST
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: customerId
+    value: "200001"
+    description: 顾客id，以2开头，共6位
+  - key: merchantId
+    value: "100001"
+    description: 供应商id，以1开头，共6位
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/添加供应商为收藏.resources/examples
+order: 1000

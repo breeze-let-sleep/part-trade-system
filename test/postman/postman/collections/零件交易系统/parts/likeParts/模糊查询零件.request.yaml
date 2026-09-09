@@ -1,0 +1,35 @@
+$kind: http-request
+description: 根据零件id、名称、重量、颜色、时间范围等条件模糊查询零件列表
+url: "{{baseUrl}}/parts/likeParts?partId=1&partName=螺丝&weight=5.5&color=1&startTime=2025-11-01 00:00:00&endTime=2025-11-30 23:59:59&isPublish=1"
+method: GET
+headers:
+  Accept: "*/*"
+queryParams:
+  - key: partId
+    value: "1"
+    description: 零件id
+  - key: partName
+    value: 螺丝
+    description: 零件名称
+  - key: weight
+    value: "5.5"
+    description: 重量，单位kg
+  - key: color
+    value: "1"
+    description: 颜色（1:红;2:黄;3:绿;4:蓝;5:白;6:黑;）
+  - key: startTime
+    value: 2025-11-01 00:00:00
+    description: 开始时间，格式：yyyy-MM-dd HH:mm:ss
+  - key: endTime
+    value: 2025-11-30 23:59:59
+    description: 结束时间，格式：yyyy-MM-dd HH:mm:ss
+  - key: isPublish
+    value: "1"
+    description: 是否发布上线（0:否;1:是）
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/模糊查询零件.resources/examples
+order: 1000

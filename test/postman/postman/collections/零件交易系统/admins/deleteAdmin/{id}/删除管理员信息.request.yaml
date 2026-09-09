@@ -1,0 +1,17 @@
+$kind: http-request
+description: 根据id删除管理员信息
+url: "{{baseUrl}}/admins/deleteAdmin/:id"
+method: DELETE
+headers:
+  Accept: "*/*"
+pathVariables:
+  - key: id
+    value: "000001"
+    description: 管理员的id
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/删除管理员信息.resources/examples
+order: 1000

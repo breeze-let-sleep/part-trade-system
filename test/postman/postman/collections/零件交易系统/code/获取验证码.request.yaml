@@ -1,0 +1,9 @@
+$kind: http-request
+description: 获取验证码，有效期5分钟
+url: "{{baseUrl}}/code"
+method: GET
+headers:
+  Accept: "*/*"
+settings: {}
+examples: ./.resources/获取验证码.resources/examples
+order: 1000

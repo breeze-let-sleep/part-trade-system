@@ -1,0 +1,28 @@
+$kind: http-request
+description: 根据订单信息下单购买零件
+url: "{{baseUrl}}/orders/addOrder"
+method: POST
+headers:
+  Content-Type: application/json
+  Accept: "*/*"
+body:
+  type: json
+  content: |-
+    {
+      "id": 1,
+      "merchantId": 100001,
+      "customerId": 200001,
+      "partId": 1,
+      "amount": 10,
+      "totalPrice": 500,
+      "isSuccess": 0,
+      "isPaid": 0,
+      "createTime": "2019-08-08T03:21:12.484Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/购买零件.resources/examples
+order: 1000

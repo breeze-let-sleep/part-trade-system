@@ -1,0 +1,28 @@
+$kind: http-request
+description: 修改供应商信息，修改成功后返回成功提示
+url: "{{baseUrl}}/merchants/updateMerchant"
+method: PUT
+headers:
+  Content-Type: application/json
+  Accept: "*/*"
+body:
+  type: json
+  content: |-
+    {
+      "id": 100001,
+      "name": "供应商小明",
+      "password": "1234",
+      "phone": "13800138000",
+      "address": "北京市海淀区中关村大街1号",
+      "avatar": "https://part-trade.oss-cn-hangzhou.aliyuncs.com/avatar.jpg",
+      "description": "公司成立于2020年，专营各类零件销售",
+      "createTime": "1955-02-17T22:42:14.590Z",
+      "updateTime": "1999-01-08T05:10:53.115Z"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{bearerToken}}"
+settings: {}
+examples: ./.resources/修改供应商信息.resources/examples
+order: 1000
