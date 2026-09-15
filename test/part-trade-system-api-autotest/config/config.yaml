@@ -1,0 +1,37 @@
+environment: test
+environments:
+  test:
+    base_url: "http://localhost:8080"
+    timeout: 15
+    verify_ssl: false
+  local:
+    base_url: "http://localhost:8080"
+    timeout: 15
+    verify_ssl: false
+http:
+  # 后端要求登录后通过请求头 token 携带 JWT。
+  token_header: "token"
+  log_body: true
+auth:
+  # /code 可由测试自动获取；若需固定验证码则改为 false。
+  auto_fetch_code: true
+  # 可选值：plain、md5。接口文档示例与密码字段说明存在差异，默认不加密。
+  password_mode: "plain"
+upload:
+  # 可选值：multipart、query。文档将 file 标为 query binary，实际 Spring 项目通常使用 multipart。
+  mode: "multipart"
+database:
+  enabled: false
+  driver-class-name: "com.mysql.cj.jdbc.Driver"
+  url: "jdbc:mysql://localhost:3306/part_trade_system"
+  host: "localhost"
+  port: 3306
+  database: "part_trade_system"
+  username: "root"
+  password: "1234"
+  charset: "utf8mb4"
+test_data:
+  # 写接口默认跳过，确认测试库可写后改为 true。
+  run_write_tests: false
+  # 为动态数据增加时间戳，避免唯一字段冲突。
+  unique_suffix: true

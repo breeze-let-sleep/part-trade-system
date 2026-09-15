@@ -1,0 +1,26 @@
+login:
+  valid:
+    name: "顾客小明"
+    phone: "13800138000"
+    password: "1234"
+    role: 2
+    code: "888888"
+  invalid:
+    name: "不存在用户"
+    phone: "19999999999"
+    password: "wrong-password"
+    role: 2
+    code: "000000"
+register:
+  customer:
+    name: "自动化顾客${suffix}"
+    phone: "13900000001"
+    password: "1234"
+    role: 2
+    code: "888888"
+  merchant:
+    name: "自动化供应商${suffix}"
+    phone: "13900000002"
+    password: "1234"
+    role: 1
+    code: "888888"

@@ -1,0 +1,65 @@
+common:
+  current_page: 1
+  page_size: 10
+customer:
+  id: 200002
+  add:
+    id: 299999
+    name: "自动化顾客${suffix}"
+    password: "e10adc3949ba59abbe56e057f20f883e"
+    phone: "13910000001"
+    address: "北京市海淀区自动化路 1 号"
+    avatar: ""
+  update:
+    id: 299999
+    name: "顾客小明-自动化更新"
+    password: "e10adc3949ba59abbe56e057f20f883e"
+    phone: "13800138000"
+    address: "北京市海淀区中关村大街 1 号"
+    avatar: ""
+  filter:
+    like_name: "顾客"
+    like_address: "北京"
+    start_time: "2000-01-01 00:00:00"
+    end_time: "2099-12-31 23:59:59"
+merchant:
+  id: 100001
+  add:
+    id: 199999
+    name: "自动化供应商${suffix}"
+    password: "e10adc3949ba59abbe56e057f20f883e"
+    phone: "13910000002"
+    address: "上海市自动化路 1 号"
+    avatar: ""
+    description: "自动化测试供应商"
+  update:
+    id: 199999
+    name: "供应商小明-自动化更新"
+    password: "e10adc3949ba59abbe56e057f20f883e"
+    phone: "13800138000"
+    address: "北京市海淀区中关村大街 1 号"
+    avatar: ""
+    description: "自动化测试供应商"
+  filter:
+    like_name: "供应商"
+    like_address: "北京"
+    start_time: "2000-01-01 00:00:00"
+    end_time: "2099-12-31 23:59:59"
+admin:
+  id: 1
+  add:
+    id: 99999
+    name: "自动化管理员${suffix}"
+    password: "e10adc3949ba59abbe56e057f20f883e"
+    phone: "13910000003"
+    avatar: ""
+  update:
+    id: 99999
+    name: "管理员小明-自动化更新"
+    password: "e10adc3949ba59abbe56e057f20f883e"
+    phone: "13800138000"
+    avatar: ""
+  filter:
+    input: "管理员"
+    start_time: "2000-01-01 00:00:00"
+    end_time: "2099-12-31 23:59:59"

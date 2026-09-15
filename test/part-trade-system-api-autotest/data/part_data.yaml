@@ -1,0 +1,32 @@
+common:
+  current_page: 1
+  page_size: 10
+part:
+  id: 1
+  add:
+    id: 999999
+    merchantId: 100001
+    name: "自动化零件${suffix}"
+    color: 1
+    weight: 5.5
+    description: "自动化测试零件"
+    inventory: 100
+    singlePrice: 50
+  update:
+    id: 999999
+    merchantId: 100001
+    name: "六角螺丝-自动化更新"
+    color: 1
+    weight: 5.5
+    description: "不锈钢材质，自动化更新"
+    inventory: 100
+    singlePrice: 50
+  publish:
+    is_publish: 1
+  filter:
+    part_name: "螺丝"
+    weight: 5.5
+    color: 1
+    start_time: "2000-01-01 00:00:00"
+    end_time: "2099-12-31 23:59:59"
+    is_publish: 1

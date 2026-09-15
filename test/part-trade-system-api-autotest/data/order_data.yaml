@@ -1,0 +1,29 @@
+common:
+  current_page: 1
+  page_size: 10
+order:
+  id: 1
+  add:
+    merchantId: 100001
+    customerId: 200002
+    partId: 1
+    amount: 10
+    totalPrice: 500
+  filter:
+    part_name: "螺丝"
+    star: 5
+    start_time: "2000-01-01 00:00:00"
+    end_time: "2099-12-31 23:59:59"
+detail:
+  id: 1
+  evaluate:
+    id: 1
+    orderId: 1
+    isDeliver: 1
+    isTake: 1
+    star: 5
+    evaluate: "自动化评价：物美价廉"
+contract:
+  signature:
+    order_id: 1
+    value: "自动化签名"

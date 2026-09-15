@@ -1,0 +1,15 @@
+report: {}
+logs:
+  current_page: 1
+  page_size: 10
+goods:
+  cursor: 0
+  size: 10
+  input_merchant: "供应商"
+  input_part: "螺丝"
+upload:
+  file_path: "data/upload_sample.txt"
+chat:
+  prompt: "请回复：自动化测试"
+  chat_id: "codex-api-test"
+  cur_id: 0
